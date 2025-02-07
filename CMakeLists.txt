@@ -2,12 +2,22 @@ cmake_minimum_required(VERSION 3.10)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-set(ProjectName "project_name")
-set(Subsystem "CONSOLE")
+set(ProjectName "MidnightMath")
 
 project("${ProjectName}" VERSION 0.1)
+
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL
+    https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP false
+)
+
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
 
 add_custom_target(q_start_clock ALL
     COMMENT "Starting console clock"
@@ -16,18 +26,23 @@ add_custom_target(q_start_clock ALL
 )
 
 #app executable
-add_executable("${ProjectName}"
+add_library("${ProjectName}" STATIC
         #src files
-        src/main.cpp
+        src/information.cpp
         #header files
+        include/information.hpp
+        include/vector.hpp
 )
 
-if(Subsystem STREQUAL "CONSOLE")
-    set_target_properties("${ProjectName}" PROPERTIES LINK_FLAGS /SUBSYSTEM:CONSOLE)
-    target_compile_definitions("${ProjectName}" PRIVATE SUBSYSTEM_CONSOLE)
-elseif (Subsystem STREQUAL "WINDOWS")
-    set_target_properties("${ProjectName}" PROPERTIES LINK_FLAGS /SUBSYSTEM:WINDOWS)
-    target_compile_definitions("${ProjectName}" PRIVATE SUBSYSTEM_WINDOWS)
-endif ()
-
 add_dependencies("${ProjectName}" q_start_clock)
+
+enable_testing()
+
+add_executable(md-math-tests 
+    tests/sanity_test.cpp
+    tests/vector_tests.cpp
+)
+
+target_link_libraries(md-math-tests gtest_main ${ProjectName})
+
+include(googletest)
