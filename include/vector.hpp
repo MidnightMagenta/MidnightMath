@@ -5,8 +5,6 @@
 #include <initializer_list>
 #include <inttypes.h>
 
-#define FORCEINLINE __forceinline
-
 namespace md_math {
 template<typename t_scalar, size_t t_size, bool t_enable_simd>
 struct vec {};
@@ -25,34 +23,38 @@ struct vec {};
 
 #define MD_INITIALIZER_LIST_CONSTRUCTOR                                        \
 	vec(std::initializer_list<int> list) {                                     \
+		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) 0; }        \
 		if (list.size() == t_size) {                                           \
 			auto initializer = list.begin();                                   \
 			for (size_t i = 0; i < t_size; i++) {                              \
-				data[i] = (int) initializer[i];                                \
+				data[i] = (t_scalar) initializer[i];                           \
 			}                                                                  \
 		}                                                                      \
 	}                                                                          \
 	vec(std::initializer_list<float> list) {                                   \
 		if (list.size() == t_size) {                                           \
+			for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) 0; }    \
 			auto initializer = list.begin();                                   \
 			for (size_t i = 0; i < t_size; i++) {                              \
-				data[i] = (float) initializer[i];                              \
+				data[i] = (t_scalar) initializer[i];                           \
 			}                                                                  \
 		}                                                                      \
 	}                                                                          \
 	vec(std::initializer_list<double> list) {                                  \
+		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) 0; }        \
 		if (list.size() == t_size) {                                           \
 			auto initializer = list.begin();                                   \
 			for (size_t i = 0; i < t_size; i++) {                              \
-				data[i] = (double) initializer[i];                             \
+				data[i] = (t_scalar) initializer[i];                           \
 			}                                                                  \
 		}                                                                      \
 	}                                                                          \
 	vec(std::initializer_list<unsigned int> list) {                            \
+		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) 0; }        \
 		if (list.size() == t_size) {                                           \
 			auto initializer = list.begin();                                   \
 			for (size_t i = 0; i < t_size; i++) {                              \
-				data[i] = (unsigned int) initializer[i];                       \
+				data[i] = (t_scalar) initializer[i];                           \
 			}                                                                  \
 		}                                                                      \
 	}
@@ -80,7 +82,7 @@ struct vec {};
 	~vec() {}
 
 #define MD_MATH_DEFINE_COMPONENT_WISE_OP(op)                                   \
-	FORCEINLINE t_vec operator op(const t_vec &b) {                            \
+	inline t_vec operator op(const t_vec &b) {                                 \
 		t_vec result;                                                          \
 		for (size_t i = 0; i < t_size; i++) {                                  \
 			result.data[i] = data[i] op b.data[i];                             \
@@ -89,14 +91,14 @@ struct vec {};
 	}
 
 #define MD_MATH_DEFINE_SCALAR_OP(op)                                           \
-	FORCEINLINE t_vec operator op(t_scalar b) {                                \
+	inline t_vec operator op(t_scalar b) {                                     \
 		t_vec result;                                                          \
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] op b; } \
 		return result;                                                         \
 	}
 
 #define MD_MATH_DEFINE_BOOLEAN_OP(op)                                          \
-	FORCEINLINE bool operator op(const t_vec &b) const {                       \
+	inline bool operator op(const t_vec &b) const {                            \
 		for (size_t i = 0; i < t_size; i++) {                                  \
 			if (!(data[i] op b.data[i])) { return false; }                     \
 		}                                                                      \
@@ -104,7 +106,7 @@ struct vec {};
 	}
 
 #define MD_MATH_ASSIGNMENT_OP(full_op, op)                                     \
-	FORCEINLINE t_vec &operator full_op(const t_vec & b) {                     \
+	inline t_vec &operator full_op(const t_vec & b) {                          \
 		for (size_t i = 0; i < t_size; i++) {                                  \
 			data[i] = data[i] op b.data[i];                                    \
 		}                                                                      \
@@ -112,7 +114,7 @@ struct vec {};
 	}
 
 #define MD_MATH_ASSIGNMENT                                                     \
-	FORCEINLINE t_vec &operator=(std::initializer_list<t_scalar> list) {       \
+	inline t_vec &operator=(std::initializer_list<t_scalar> list) {            \
 		if (list.size() == t_size) {                                           \
 			auto initializer = list.begin();                                   \
 			for (size_t i = 0; i < t_size; i++) { data[i] = initializer[i]; }  \
@@ -120,7 +122,7 @@ struct vec {};
 		return *this;                                                          \
 	}                                                                          \
 	template<typename t_b_type>                                                \
-	FORCEINLINE t_vec operator=(const t_b_type &b) {                           \
+	inline t_vec operator=(const t_b_type &b) {                                \
 		size_t l = (t_size < t_b_type::t_size) ? t_size : t_b_type::t_size;    \
 		for (size_t i = 0; i < t_size; i++) { data[i] = t_scalar(b.data[i]); } \
 		for (size_t i = l; i < t_size; i++) { data[i] = t_scalar(0); }         \
@@ -128,35 +130,33 @@ struct vec {};
 	}
 
 #define MD_MATH_NEGATE_OP                                                      \
-	FORCEINLINE t_vec operator-() const {                                      \
+	inline t_vec operator-() const {                                           \
 		t_vec result;                                                          \
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = -data[i]; }     \
 		return result;                                                         \
 	}
 
 #define MD_MATH_DEFINE_LENGTH                                                  \
-	FORCEINLINE t_scalar length() const {                                      \
+	inline t_scalar length() const {                                           \
 		t_scalar sum = 0;                                                      \
-		for (size_t i = 0; i < t_size; i++) {                                  \
-			sum += data[i] * data[i];                                          \
-		}                                                                      \
+		for (size_t i = 0; i < t_size; i++) { sum += data[i] * data[i]; }      \
 		return std::sqrt(sum);                                                 \
 	}
 
 #define MD_MATH_DEFINE_NORMALIZE                                               \
-	FORCEINLINE void normalize() {                                             \
+	inline void normalize() {                                                  \
 		t_scalar _length = length();                                           \
 		for (size_t i = 0; i < t_size; i++) { data[i] /= _length; }            \
 	}
 #define MD_MATH_DEFINE_DOT                                                     \
-	FORCEINLINE t_scalar dot(const t_vec &b) {                                 \
+	inline t_scalar dot(const t_vec &b) {                                      \
 		t_scalar result = 0;                                                   \
 		for (size_t i = 0; i < t_size; i++) { result += data[i] * b.data[i]; } \
 		return result;                                                         \
 	}
 
 #define MD_MATH_DEFINE_ANGLE                                                   \
-	FORCEINLINE t_scalar angle(const t_vec &b) {                               \
+	inline t_scalar angle(const t_vec &b) {                                    \
 		return std::acos(dot(b) / (length() * b.length()));                    \
 	}
 
