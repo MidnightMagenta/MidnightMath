@@ -1,6 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <cmath>
 #include <initializer_list>
 #include <inttypes.h>
 
@@ -25,8 +26,10 @@ struct vec {};
 #define MD_INITIALIZER_LIST_CONSTRUCTOR                                        \
 	vec(std::initializer_list<t_scalar> list) {                                \
 		if (list.size() == t_size) {                                           \
-			auto it = list.begin();                                            \
-			for (size_t i = 0; i < t_size; i++) { data[i] = *(it + i); }       \
+			auto initializer = list.begin();                                   \
+			for (size_t i = 0; i < t_size; i++) {                              \
+				data[i] = *(initializer + i);                                  \
+			}                                                                  \
 		}                                                                      \
 	}
 
@@ -45,7 +48,12 @@ struct vec {};
 	}
 
 #define MD_MATH_DEFAULT_CONSTRUCTOR                                            \
-	vec() {}
+	vec() {                                                                    \
+		for (size_t i = 0; i < t_size; i++) { data[i] = t_scalar(); }          \
+	}
+
+#define MD_MATH_DEFAULT_DESTRUCTOR                                             \
+	~vec() {}
 
 #define MD_MATH_DEFINE_COMPONENT_WISE_OP(op)                                   \
 	FORCEINLINE t_vec operator op(const t_vec &b) {                            \
@@ -78,15 +86,41 @@ struct vec {};
 		}                                                                      \
 		return *this;                                                          \
 	}
+
 #define MD_MATH_ASSIGNMENT                                                     \
 	FORCEINLINE t_vec &operator=(std::initializer_list<t_scalar> list) {       \
 		if (list.size() == t_size) {                                           \
-			auto it = list.begin();                                            \
-			for (size_t i = 0; i < t_size; i++) { data[i] = *(it + i); }       \
+			auto initializer = list.begin();                                   \
+			for (size_t i = 0; i < t_size; i++) {                              \
+				data[i] = *(initializer + i);                                  \
+			}                                                                  \
 		}                                                                      \
+		return *this;                                                          \
+	}                                                                          \
+	FORCEINLINE t_vec operator=(const t_vec &b) {                              \
+		for (size_t i = 0; i < t_size; i++) { data[i] = b.data[i]; }           \
 		return *this;                                                          \
 	}
 
+#define MD_MATH_NEGATE_OP                                                      \
+	FORCEINLINE t_vec operator-() const {                                      \
+		t_vec result;                                                          \
+		for (size_t i = 0; i < t_size; i++) { result.data[i] = -data[i]; }     \
+		return result;                                                         \
+	}
+
+#define MD_MATH_DEFINE_LENGTH                                                  \
+	FORCEINLINE t_scalar length() {                                            \
+		t_scalar sum = 0;                                                      \
+		for (size_t i = 0; i < t_size; i++) { sum += data[i] * data[i]; }      \
+		return std::sqrt(sum);                                                 \
+	}
+
+#define MD_MATH_NORMALIZE                                                      \
+	FORCEINLINE void normalize() {                                             \
+		t_scalar length = length();                                            \
+		for (size_t i = 0; i < t_size; i++) { data[i] /= length; }             \
+	}
 
 //non SIMD vectors
 template<typename t_scalar_>
@@ -99,6 +133,7 @@ struct vec<t_scalar_, 1, false> {
 	MD_INITIALIZER_LIST_CONSTRUCTOR
 	MD_MATH_VEC_CONSTRUCTORS
 	MD_MATH_DEFAULT_CONSTRUCTOR
+	MD_MATH_DEFAULT_DESTRUCTOR
 
 	MD_MATH_ASSIGNMENT
 
@@ -110,6 +145,7 @@ struct vec<t_scalar_, 1, false> {
 	MD_MATH_DEFINE_SCALAR_OP(-)
 	MD_MATH_DEFINE_SCALAR_OP(*)
 	MD_MATH_DEFINE_SCALAR_OP(/)
+	MD_MATH_NEGATE_OP
 
 	MD_MATH_DEFINE_BOOLEAN_OP(==)
 	MD_MATH_DEFINE_BOOLEAN_OP(<=)
@@ -122,6 +158,9 @@ struct vec<t_scalar_, 1, false> {
 	MD_MATH_ASSIGNMENT_OP(-=, -)
 	MD_MATH_ASSIGNMENT_OP(*=, *)
 	MD_MATH_ASSIGNMENT_OP(/=, /)
+
+	MD_MATH_DEFINE_LENGTH
+	MD_MATH_NORMALIZE
 };
 template<typename t_scalar_>
 struct vec<t_scalar_, 2, false> {
@@ -143,6 +182,7 @@ struct vec<t_scalar_, 2, false> {
 	MD_INITIALIZER_LIST_CONSTRUCTOR
 	MD_MATH_VEC_CONSTRUCTORS
 	MD_MATH_DEFAULT_CONSTRUCTOR
+	MD_MATH_DEFAULT_DESTRUCTOR
 
 	MD_MATH_ASSIGNMENT
 
@@ -154,6 +194,7 @@ struct vec<t_scalar_, 2, false> {
 	MD_MATH_DEFINE_SCALAR_OP(-)
 	MD_MATH_DEFINE_SCALAR_OP(*)
 	MD_MATH_DEFINE_SCALAR_OP(/)
+	MD_MATH_NEGATE_OP
 
 	MD_MATH_DEFINE_BOOLEAN_OP(==)
 	MD_MATH_DEFINE_BOOLEAN_OP(<=)
@@ -166,6 +207,9 @@ struct vec<t_scalar_, 2, false> {
 	MD_MATH_ASSIGNMENT_OP(-=, -)
 	MD_MATH_ASSIGNMENT_OP(*=, *)
 	MD_MATH_ASSIGNMENT_OP(/=, /)
+
+	MD_MATH_DEFINE_LENGTH
+	MD_MATH_NORMALIZE
 };
 template<typename t_scalar_>
 struct vec<t_scalar_, 3, false> {
@@ -183,6 +227,7 @@ struct vec<t_scalar_, 3, false> {
 	MD_INITIALIZER_LIST_CONSTRUCTOR
 	MD_MATH_VEC_CONSTRUCTORS
 	MD_MATH_DEFAULT_CONSTRUCTOR
+	MD_MATH_DEFAULT_DESTRUCTOR
 
 	MD_MATH_ASSIGNMENT
 
@@ -194,6 +239,7 @@ struct vec<t_scalar_, 3, false> {
 	MD_MATH_DEFINE_SCALAR_OP(-)
 	MD_MATH_DEFINE_SCALAR_OP(*)
 	MD_MATH_DEFINE_SCALAR_OP(/)
+	MD_MATH_NEGATE_OP
 
 	MD_MATH_DEFINE_BOOLEAN_OP(==)
 	MD_MATH_DEFINE_BOOLEAN_OP(<=)
@@ -206,6 +252,9 @@ struct vec<t_scalar_, 3, false> {
 	MD_MATH_ASSIGNMENT_OP(-=, -)
 	MD_MATH_ASSIGNMENT_OP(*=, *)
 	MD_MATH_ASSIGNMENT_OP(/=, /)
+
+	MD_MATH_DEFINE_LENGTH
+	MD_MATH_NORMALIZE
 };
 template<typename t_scalar_>
 struct vec<t_scalar_, 4, false> {
@@ -225,6 +274,7 @@ struct vec<t_scalar_, 4, false> {
 	MD_INITIALIZER_LIST_CONSTRUCTOR
 	MD_MATH_VEC_CONSTRUCTORS
 	MD_MATH_DEFAULT_CONSTRUCTOR
+	MD_MATH_DEFAULT_DESTRUCTOR
 
 	MD_MATH_ASSIGNMENT
 
@@ -236,6 +286,7 @@ struct vec<t_scalar_, 4, false> {
 	MD_MATH_DEFINE_SCALAR_OP(-)
 	MD_MATH_DEFINE_SCALAR_OP(*)
 	MD_MATH_DEFINE_SCALAR_OP(/)
+	MD_MATH_NEGATE_OP
 
 	MD_MATH_DEFINE_BOOLEAN_OP(==)
 	MD_MATH_DEFINE_BOOLEAN_OP(<=)
@@ -248,6 +299,9 @@ struct vec<t_scalar_, 4, false> {
 	MD_MATH_ASSIGNMENT_OP(-=, -)
 	MD_MATH_ASSIGNMENT_OP(*=, *)
 	MD_MATH_ASSIGNMENT_OP(/=, /)
+
+	MD_MATH_DEFINE_LENGTH
+	MD_MATH_NORMALIZE
 };
 
 //generic non SIMD vector template

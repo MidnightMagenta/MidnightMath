@@ -24,3 +24,9 @@ TEST(VectorTests, vec2_div_test) {
 	vec /= vec;
 	EXPECT_EQ(vec, md_math::vec2({1.f, 1.f}));
 }
+
+TEST(VectorTests, vec2_negate_test) {
+	md_math::vec2 vec({1, 1});
+	vec = -vec;
+	EXPECT_EQ(vec, md_math::vec2({-1, -1}));
+}
