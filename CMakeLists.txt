@@ -29,7 +29,6 @@ add_custom_target(q_start_clock ALL
 add_library("${ProjectName}" STATIC
         #src files
         src/information.cpp
-        src/vector.cpp
         #header files
         include/information.hpp
         include/vector.hpp
