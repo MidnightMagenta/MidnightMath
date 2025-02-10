@@ -54,27 +54,27 @@ VEC_OP_TEST_4D_DSIMD(/, div_test)
 TEST_SIGNATURE_4D_SIMD(magnitude_test) {
 	float x = 1.0f, y = 2.0f, z = 3.0f, w = 4.0f;
 	md_math::vec4_v vec(x, y, z, w);
-	EXPECT_NEAR(vec.magnitude(), std::sqrt(x * x + y * y + z * z + w * w),
+	EXPECT_NEAR(vec.magnitude4d(), std::sqrt(x * x + y * y + z * z + w * w),
 				1e-5);
-	vec.normalize();
-	EXPECT_NEAR(vec.magnitude(), 1.0f, 1e-5);
+	vec = vec.normalize4d();
+	EXPECT_NEAR(vec.magnitude4d(), 1.0f, 1e-5);
 }
 
 TEST_SIGNATURE_2D_DSIMD(magnitude_test) {
 	double x = 1.0, y = 2.0;
 	md_math::dvec2_v vec(x, y);
 	EXPECT_NEAR(vec.magnitude(), std::sqrt(x * x + y * y), 1e-5);
-	vec.normalize();
+	vec = vec.normalize();
 	EXPECT_NEAR(vec.magnitude(), 1.0, 1e-5);
 }
 
 TEST_SIGNATURE_4D_DSIMD(magnitude_test) {
 	double x = 1.0, y = 2.0, z = 3.0, w = 4.0;
 	md_math::dvec4_v vec(x, y, z, w);
-	EXPECT_NEAR(vec.magnitude(), std::sqrt(x * x + y * y + z * z + w * w),
+	EXPECT_NEAR(vec.magnitude4d(), std::sqrt(x * x + y * y + z * z + w * w),
 				1e-5);
-	vec.normalize();
-	EXPECT_NEAR(vec.magnitude(), 1.0, 1e-5);
+	vec = vec.normalize4d();
+	EXPECT_NEAR(vec.magnitude4d(), 1.0, 1e-5);
 }
 
 TEST_SIGNATURE_4D_SIMD(dot_test) {

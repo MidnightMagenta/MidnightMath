@@ -32,6 +32,7 @@ add_library("${ProjectName}" STATIC
         #header files
         include/information.hpp
         include/vector.hpp
+        include/constants.hpp
 )
 
 add_dependencies("${ProjectName}" q_start_clock)

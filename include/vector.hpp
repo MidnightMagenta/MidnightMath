@@ -53,52 +53,53 @@ struct vec<t_scalar_, 2, false> {
 		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) 0; }
 		if (list.size() == t_size) {
 			auto initializer = list.begin();
-			for (size_t i = 0; i < t_size; i++) {
-				data[i] = (t_scalar) initializer[i];
-			}
+			data[0] = (t_scalar) initializer[0];
+			data[1] = (t_scalar) initializer[1];
 		}
 	}
 	vec(std::initializer_list<float> list) {
 		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) 0; }
 		if (list.size() == t_size) {
 			auto initializer = list.begin();
-			for (size_t i = 0; i < t_size; i++) {
-				data[i] = (t_scalar) initializer[i];
-			}
+			data[0] = (t_scalar) initializer[0];
+			data[1] = (t_scalar) initializer[1];
 		}
 	}
 	vec(std::initializer_list<double> list) {
 		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) 0; }
 		if (list.size() == t_size) {
 			auto initializer = list.begin();
-			for (size_t i = 0; i < t_size; i++) {
-				data[i] = (t_scalar) initializer[i];
-			}
+			data[0] = (t_scalar) initializer[0];
+			data[1] = (t_scalar) initializer[1];
 		}
 	}
 	vec(std::initializer_list<unsigned int> list) {
 		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) 0; }
 		if (list.size() == t_size) {
 			auto initializer = list.begin();
-			for (size_t i = 0; i < t_size; i++) {
-				data[i] = (t_scalar) initializer[i];
-			}
+			data[0] = (t_scalar) initializer[0];
+			data[1] = (t_scalar) initializer[1];
 		}
 	}
 	vec(int s) {
-		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) s; }
+		data[0] = (t_scalar) s;
+		data[1] = (t_scalar) s;
 	}
 	vec(float s) {
-		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) s; }
+		data[0] = (t_scalar) s;
+		data[1] = (t_scalar) s;
 	}
 	vec(double s) {
-		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) s; }
+		data[0] = (t_scalar) s;
+		data[1] = (t_scalar) s;
 	}
 	vec(unsigned int s) {
-		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) s; }
+		data[0] = (t_scalar) s;
+		data[1] = (t_scalar) s;
 	}
 	vec() {
-		for (size_t i = 0; i < t_size; i++) { data[i] = t_scalar(); }
+		data[0] = (t_scalar) 0;
+		data[1] = (t_scalar) 0;
 	}
 	~vec() {}
 
@@ -110,7 +111,8 @@ struct vec<t_scalar_, 2, false> {
 	inline t_vec &operator=(std::initializer_list<t_scalar> list) {
 		if (list.size() == t_size) {
 			auto initializer = list.begin();
-			for (size_t i = 0; i < t_size; i++) { data[i] = initializer[i]; }
+			data[0] = (t_scalar) initializer[0];
+			data[1] = (t_scalar) initializer[1];
 		}
 		return *this;
 	}
@@ -124,55 +126,56 @@ struct vec<t_scalar_, 2, false> {
 
 	inline t_vec operator+(const t_vec &b) {
 		t_vec result;
-		for (size_t i = 0; i < t_size; i++) {
-			result.data[i] = data[i] + b.data[i];
-		}
+		result.data[0] = data[0] + b.data[0];
+		result.data[1] = data[1] + b.data[1];
 		return result;
 	}
 	inline t_vec operator-(const t_vec &b) {
 		t_vec result;
-		for (size_t i = 0; i < t_size; i++) {
-			result.data[i] = data[i] - b.data[i];
-		}
+		result.data[0] = data[0] - b.data[0];
+		result.data[1] = data[1] - b.data[1];
 		return result;
 	}
 	inline t_vec operator/(const t_vec &b) {
 		t_vec result;
-		for (size_t i = 0; i < t_size; i++) {
-			result.data[i] = data[i] / b.data[i];
-		}
+		result.data[0] = data[0] / b.data[0];
+		result.data[1] = data[1] / b.data[1];
 		return result;
 	}
 	inline t_vec operator*(const t_vec &b) {
 		t_vec result;
-		for (size_t i = 0; i < t_size; i++) {
-			result.data[i] = data[i] * b.data[i];
-		}
+		result.data[0] = data[0] * b.data[0];
+		result.data[1] = data[1] * b.data[1];
 		return result;
 	}
 	inline t_vec operator+(t_scalar b) {
 		t_vec result;
-		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] + b; }
+		result.data[0] = data[0] + b;
+		result.data[1] = data[1] + b;
 		return result;
 	}
 	inline t_vec operator-(t_scalar b) {
 		t_vec result;
-		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] - b; }
+		result.data[0] = data[0] - b;
+		result.data[1] = data[1] - b;
 		return result;
 	}
 	inline t_vec operator*(t_scalar b) {
 		t_vec result;
-		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] * b; }
+		result.data[0] = data[0] * b;
+		result.data[1] = data[1] * b;
 		return result;
 	}
 	inline t_vec operator/(t_scalar b) {
 		t_vec result;
-		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] / b; }
+		result.data[0] = data[0] / b;
+		result.data[1] = data[1] / b;
 		return result;
 	}
 	inline t_vec operator-() const {
 		t_vec result;
-		for (size_t i = 0; i < t_size; i++) { result.data[i] = -data[i]; }
+		result.data[0] = -data[0];
+		result.data[1] = -data[1];
 		return result;
 	}
 	inline t_scalar &operator[](size_t i) { return data[i]; }
@@ -236,9 +239,11 @@ struct vec<t_scalar_, 2, false> {
 		for (size_t i = 0; i < t_size; i++) { sum += data[i] * data[i]; }
 		return std::sqrt(sum);
 	}
-	inline void normalize() {
+	inline t_vec normalize() {
+		t_vec res = *this;
 		t_scalar _length = magnitude();
-		for (size_t i = 0; i < t_size; i++) { data[i] /= _length; }
+		for (size_t i = 0; i < t_size; i++) { res.data[i] /= _length; }
+		return res;
 	}
 	inline t_scalar dot(const t_vec &b) {
 		t_scalar result = 0;
@@ -451,9 +456,11 @@ struct vec<t_scalar_, 3, false> {
 		for (size_t i = 0; i < t_size; i++) { sum += data[i] * data[i]; }
 		return std::sqrt(sum);
 	}
-	inline void normalize() {
+	inline t_vec normalize() {
+		t_vec res = *this;
 		t_scalar _length = magnitude();
-		for (size_t i = 0; i < t_size; i++) { data[i] /= _length; }
+		for (size_t i = 0; i < t_size; i++) { res.data[i] /= _length; }
+		return res;
 	}
 	inline t_scalar dot(const t_vec &b) {
 		t_scalar result = 0;
@@ -683,9 +690,11 @@ struct vec<t_scalar_, 4, false> {
 		return std::sqrt(sum);
 	}
 
-	inline void normalize() {
+	inline t_vec normalize() {
+		t_vec res = *this;
 		t_scalar _length = magnitude();
-		for (size_t i = 0; i < t_size; i++) { data[i] /= _length; }
+		for (size_t i = 0; i < t_size; i++) { res.data[i] /= _length; }
+		return res;
 	}
 
 	inline t_scalar dot(const t_vec &b) {
@@ -927,9 +936,11 @@ struct vec<t_scalar_, t_size_, false> {
 		return std::sqrt(sum);
 	}
 
-	inline void normalize() {
+	inline t_vec normalize() {
+		t_vec res = *this;
 		t_scalar _length = magnitude();
-		for (size_t i = 0; i < t_size; i++) { data[i] /= _length; }
+		for (size_t i = 0; i < t_size; i++) { res.data[i] /= _length; }
+		return res;
 	}
 
 	inline t_scalar dot(const t_vec &b) {
@@ -1076,16 +1087,14 @@ struct alignas(16) vec<float, 4, true> {
 		return _mm_sub_ps(_mm_mul_ps(t1, t2), _mm_mul_ps(t3, t4));
 	}
 	inline t_scalar magnitude() {
-		__m128 sqrd = _mm_mul_ps(data_v, data_v);
-		return std::sqrt(sqrd.m128_f32[0] + sqrd.m128_f32[1] +
-						 sqrd.m128_f32[2]);
+		__m128 res = {x(), y(), z(), 0.f};
+		return std::sqrt(t_vec(_mm_mul_ps(res, res)).sum());
 	}
-	inline t_scalar magnitude4d() {
-		__m128 sqrd = _mm_mul_ps(data_v, data_v);
-		return std::sqrt(sqrd.m128_f32[0] + sqrd.m128_f32[1] +
-						 sqrd.m128_f32[2] + sqrd.m128_f32[3]);
+	inline t_scalar magnitude4d() { return std::sqrt(dot(*this)); }
+	inline t_vec normalize() { return _mm_div_ps(data_v, t_vec(magnitude())); }
+	inline t_vec normalize4d() {
+		return _mm_div_ps(data_v, t_vec(magnitude4d()));
 	}
-	inline void normalize() { data_v = _mm_div_ps(data_v, t_vec(magnitude())); }
 };
 
 template<>
@@ -1202,17 +1211,8 @@ struct alignas(16) vec<double, 2, true> {
 		const __m128d v0 = _mm_mul_pd(data_v, v.data_v);
 		return t_vec(v0).sum();
 	}
-	inline t_scalar magnitude() {
-		__m128d sqrd = _mm_mul_pd(data_v, data_v);
-		return std::sqrt(sqrd.m128d_f64[0] + sqrd.m128d_f64[1] +
-						 sqrd.m128d_f64[2]);
-	}
-	inline t_scalar magnitude4d() {
-		__m128d sqrd = _mm_mul_pd(data_v, data_v);
-		return std::sqrt(sqrd.m128d_f64[0] + sqrd.m128d_f64[1] +
-						 sqrd.m128d_f64[2] + sqrd.m128d_f64[3]);
-	}
-	inline void normalize() { data_v = _mm_div_pd(data_v, t_vec(magnitude())); }
+	inline t_scalar magnitude() { return std::sqrt(dot(*this)); }
+	inline t_vec normalize() { return _mm_div_pd(data_v, t_vec(magnitude())); }
 };
 
 template<>
@@ -1347,42 +1347,35 @@ struct alignas(32) vec<double, 4, true> {
 		return _mm256_sub_pd(_mm256_mul_pd(t1, t2), _mm256_mul_pd(t3, t4));
 	}
 	inline t_scalar magnitude() {
-		__m256d sqrd = _mm256_mul_pd(data_v, data_v);
-		return std::sqrt(sqrd.m256d_f64[0] + sqrd.m256d_f64[1] +
-						 sqrd.m256d_f64[2]);
+		__m256d res = {x(), y(), z(), 0.0};
+		return std::sqrt(t_vec(_mm256_mul_pd(res, res)).sum());
 	}
-	inline t_scalar magnitude4d() {
-		__m256d sqrd = _mm256_mul_pd(data_v, data_v);
-		return std::sqrt(sqrd.m256d_f64[0] + sqrd.m256d_f64[1] +
-						 sqrd.m256d_f64[2] + sqrd.m256d_f64[3]);
+	inline t_scalar magnitude4d() { return std::sqrt(dot(*this)); }
+	inline t_vec normalize() {
+		return _mm256_div_pd(data_v, t_vec(magnitude()));
 	}
-	inline void normalize() {
-		data_v = _mm256_div_pd(data_v, t_vec(magnitude()));
+	inline t_vec normalize4d() {
+		return _mm256_div_pd(data_v, t_vec(magnitude4d()));
 	}
 };
 
-typedef vec<unsigned int, 1, false> uvec1_s;
 typedef vec<unsigned int, 2, false> uvec2_s;
 typedef vec<unsigned int, 3, false> uvec3_s;
 typedef vec<unsigned int, 4, false> uvec4_s;
 
-typedef vec<int, 1, false> ivec1_s;
 typedef vec<int, 2, false> ivec2_s;
 typedef vec<int, 3, false> ivec3_s;
 typedef vec<int, 4, false> ivec4_s;
 
-typedef vec<float, 1, false> vec1_s;
 typedef vec<float, 2, false> vec2_s;
 typedef vec<float, 3, false> vec3_s;
 typedef vec<float, 4, false> vec4_s, quat_s;
 
-typedef vec<double, 1, false> dvec1_s;
 typedef vec<double, 2, false> dvec2_s;
 typedef vec<double, 3, false> dvec3_s;
 typedef vec<double, 4, false> dvec4_s, dquat_s;
 
 typedef vec<float, 4, true> vec4_v, quat_v;
-typedef vec<float, 8, true> vec8_v;
 typedef vec<double, 2, true> dvec2_v;
 typedef vec<double, 4, true> dvec4_v;
 
