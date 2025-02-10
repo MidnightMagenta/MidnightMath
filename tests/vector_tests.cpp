@@ -84,41 +84,41 @@ VEC_OP_TEST_4D(-, sub_test)
 VEC_OP_TEST_4D(*, mul_test)
 VEC_OP_TEST_4D(/, div_test)
 
-TEST_SIGNATURE_1D(length_test) {
+TEST_SIGNATURE_1D(magnitude_test) {
 	float x = (float) ((rand() % 5) + 1);
 	md_math::vec1_s vec({x});
-	EXPECT_NEAR(vec.length(), std::sqrt(x * x), 1e-5);
+	EXPECT_NEAR(vec.magnitude(), std::sqrt(x * x), 1e-5);
 	vec.normalize();
-	EXPECT_NEAR(vec.length(), 1.0f, 1e-5);
+	EXPECT_NEAR(vec.magnitude(), 1.0f, 1e-5);
 }
 
-TEST_SIGNATURE_2D(length_test) {
+TEST_SIGNATURE_2D(magnitude_test) {
 	srand(time(0));
 	float x = (float) (rand() % 5) + 1, y = (float) (rand() % 5) + 1;
 	md_math::vec2_s vec({x, y});
-	EXPECT_NEAR(vec.length(), std::sqrt(x * x + y * y), 1e-5);
+	EXPECT_NEAR(vec.magnitude(), std::sqrt(x * x + y * y), 1e-5);
 	vec.normalize();
-	EXPECT_NEAR(vec.length(), 1.0f, 1e-5);
+	EXPECT_NEAR(vec.magnitude(), 1.0f, 1e-5);
 }
 
-TEST_SIGNATURE_3D(length_test) {
+TEST_SIGNATURE_3D(magnitude_test) {
 	srand(time(0));
 	float x = (float) (rand() % 5) + 1, y = (float) (rand() % 5) + 1,
 		  z = (float) (rand() % 5) + 1;
 	md_math::vec3_s vec({x, y, z});
-	EXPECT_NEAR(vec.length(), std::sqrt(x * x + y * y + z * z), 1e-5);
+	EXPECT_NEAR(vec.magnitude(), std::sqrt(x * x + y * y + z * z), 1e-5);
 	vec.normalize();
-	EXPECT_NEAR(vec.length(), 1.0f, 1e-5);
+	EXPECT_NEAR(vec.magnitude(), 1.0f, 1e-5);
 }
 
-TEST_SIGNATURE_4D(length_test) {
+TEST_SIGNATURE_4D(magnitude_test) {
 	srand(time(0));
 	float x = (float) (rand() % 5) + 1, y = (float) (rand() % 5) + 1,
 		  z = (float) (rand() % 5) + 1, w = (float) (rand() % 5) + 1;
 	md_math::vec4_s vec({x, y, z, w});
-	EXPECT_NEAR(vec.length(), std::sqrt(x * x + y * y + z * z + w * w), 1e-5);
+	EXPECT_NEAR(vec.magnitude(), std::sqrt(x * x + y * y + z * z + w * w), 1e-5);
 	vec.normalize();
-	EXPECT_NEAR(vec.length(), 1.0f, 1e-5);
+	EXPECT_NEAR(vec.magnitude(), 1.0f, 1e-5);
 }
 
 TEST_SIGNATURE_1D(dot_test) {

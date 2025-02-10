@@ -41,6 +41,7 @@ enable_testing()
 add_executable(md-math-tests 
     tests/sanity_test.cpp
     tests/vector_tests.cpp
+    tests/simd_vector_tests.cpp
 )
 
 target_link_libraries(md-math-tests gtest_main ${ProjectName})

@@ -2,6 +2,7 @@
 #define VECTOR_H
 
 #include <cmath>
+#include <immintrin.h>
 #include <initializer_list>
 #include <inttypes.h>
 
@@ -10,7 +11,9 @@ template<typename t_scalar, size_t t_size, bool t_enable_simd>
 struct vec {};
 
 #define MD_MATH_ALIAS(name, index)                                             \
-	constexpr t_scalar &name() { return data[index]; }
+	constexpr t_scalar &name() { return data[index]; }                         \
+	constexpr const t_scalar &name() const { return data[index]; }
+
 
 #define MD_MATH_DEFINE_VEC typedef vec<t_scalar_, t_size, t_simd> t_vec
 #define MD_MATH_DEFINE_SCALAR typedef t_scalar_ t_scalar
@@ -32,8 +35,8 @@ struct vec {};
 		}                                                                      \
 	}                                                                          \
 	vec(std::initializer_list<float> list) {                                   \
+		for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) 0; }        \
 		if (list.size() == t_size) {                                           \
-			for (size_t i = 0; i < t_size; i++) { data[i] = (t_scalar) 0; }    \
 			auto initializer = list.begin();                                   \
 			for (size_t i = 0; i < t_size; i++) {                              \
 				data[i] = (t_scalar) initializer[i];                           \
@@ -136,8 +139,11 @@ struct vec {};
 		return result;                                                         \
 	}
 
-#define MD_MATH_DEFINE_LENGTH                                                  \
-	inline t_scalar length() const {                                           \
+#define MD_MATH_BRACKET_OP                                                     \
+	inline t_scalar &operator[](size_t i) { return data[i]; }
+
+#define MD_MATH_DEFINE_MAGNITUDE                                               \
+	inline t_scalar magnitude() const {                                        \
 		t_scalar sum = 0;                                                      \
 		for (size_t i = 0; i < t_size; i++) { sum += data[i] * data[i]; }      \
 		return std::sqrt(sum);                                                 \
@@ -145,7 +151,7 @@ struct vec {};
 
 #define MD_MATH_DEFINE_NORMALIZE                                               \
 	inline void normalize() {                                                  \
-		t_scalar _length = length();                                           \
+		t_scalar _length = magnitude();                                        \
 		for (size_t i = 0; i < t_size; i++) { data[i] /= _length; }            \
 	}
 #define MD_MATH_DEFINE_DOT                                                     \
@@ -157,8 +163,14 @@ struct vec {};
 
 #define MD_MATH_DEFINE_ANGLE                                                   \
 	inline t_scalar angle(const t_vec &b) {                                    \
-		return std::acos(dot(b) / (length() * b.length()));                    \
+		return std::acos(dot(b) / (magnitude() * b.magnitude()));              \
 	}
+
+#define MD_S_X 0
+#define MD_S_Y 1
+#define MD_S_Z 2
+#define MD_S_W 3
+#define MD_SHUFFLE(p0, p1, p2, p3) _MM_SHUFFLE((p3), (p2), (p1), (p0))
 
 //non SIMD vectors
 template<typename t_scalar_>
@@ -184,6 +196,7 @@ struct vec<t_scalar_, 1, false> {
 	MD_MATH_DEFINE_SCALAR_OP(*)
 	MD_MATH_DEFINE_SCALAR_OP(/)
 	MD_MATH_NEGATE_OP
+	MD_MATH_BRACKET_OP
 
 	MD_MATH_DEFINE_BOOLEAN_OP(==)
 	MD_MATH_DEFINE_BOOLEAN_OP(<=)
@@ -197,11 +210,12 @@ struct vec<t_scalar_, 1, false> {
 	MD_MATH_ASSIGNMENT_OP(*=, *)
 	MD_MATH_ASSIGNMENT_OP(/=, /)
 
-	MD_MATH_DEFINE_LENGTH
+	MD_MATH_DEFINE_MAGNITUDE
 	MD_MATH_DEFINE_NORMALIZE
 	MD_MATH_DEFINE_DOT
 	MD_MATH_DEFINE_ANGLE
 };
+
 template<typename t_scalar_>
 struct vec<t_scalar_, 2, false> {
 	MD_MATH_VEC_DEFINES(2, false)
@@ -240,6 +254,7 @@ struct vec<t_scalar_, 2, false> {
 	MD_MATH_DEFINE_SCALAR_OP(*)
 	MD_MATH_DEFINE_SCALAR_OP(/)
 	MD_MATH_NEGATE_OP
+	MD_MATH_BRACKET_OP
 
 	MD_MATH_DEFINE_BOOLEAN_OP(==)
 	MD_MATH_DEFINE_BOOLEAN_OP(<=)
@@ -253,11 +268,12 @@ struct vec<t_scalar_, 2, false> {
 	MD_MATH_ASSIGNMENT_OP(*=, *)
 	MD_MATH_ASSIGNMENT_OP(/=, /)
 
-	MD_MATH_DEFINE_LENGTH
+	MD_MATH_DEFINE_MAGNITUDE
 	MD_MATH_DEFINE_NORMALIZE
 	MD_MATH_DEFINE_DOT
 	MD_MATH_DEFINE_ANGLE
 };
+
 template<typename t_scalar_>
 struct vec<t_scalar_, 3, false> {
 	MD_MATH_VEC_DEFINES(3, false)
@@ -293,6 +309,7 @@ struct vec<t_scalar_, 3, false> {
 	MD_MATH_DEFINE_SCALAR_OP(*)
 	MD_MATH_DEFINE_SCALAR_OP(/)
 	MD_MATH_NEGATE_OP
+	MD_MATH_BRACKET_OP
 
 	MD_MATH_DEFINE_BOOLEAN_OP(==)
 	MD_MATH_DEFINE_BOOLEAN_OP(<=)
@@ -306,7 +323,7 @@ struct vec<t_scalar_, 3, false> {
 	MD_MATH_ASSIGNMENT_OP(*=, *)
 	MD_MATH_ASSIGNMENT_OP(/=, /)
 
-	MD_MATH_DEFINE_LENGTH
+	MD_MATH_DEFINE_MAGNITUDE
 	MD_MATH_DEFINE_NORMALIZE
 	MD_MATH_DEFINE_DOT
 	MD_MATH_DEFINE_ANGLE
@@ -316,6 +333,7 @@ struct vec<t_scalar_, 3, false> {
 				x() * b.y() - y() * b.x()};
 	}
 };
+
 template<typename t_scalar_>
 struct vec<t_scalar_, 4, false> {
 	MD_MATH_VEC_DEFINES(4, false)
@@ -354,6 +372,7 @@ struct vec<t_scalar_, 4, false> {
 	MD_MATH_DEFINE_SCALAR_OP(*)
 	MD_MATH_DEFINE_SCALAR_OP(/)
 	MD_MATH_NEGATE_OP
+	MD_MATH_BRACKET_OP
 
 	MD_MATH_DEFINE_BOOLEAN_OP(==)
 	MD_MATH_DEFINE_BOOLEAN_OP(<=)
@@ -367,7 +386,7 @@ struct vec<t_scalar_, 4, false> {
 	MD_MATH_ASSIGNMENT_OP(*=, *)
 	MD_MATH_ASSIGNMENT_OP(/=, /)
 
-	MD_MATH_DEFINE_LENGTH
+	MD_MATH_DEFINE_MAGNITUDE
 	MD_MATH_DEFINE_NORMALIZE
 	MD_MATH_DEFINE_DOT
 	MD_MATH_DEFINE_ANGLE
@@ -405,6 +424,7 @@ struct vec<t_scalar_, t_size_, false> {
 	MD_MATH_DEFINE_SCALAR_OP(*)
 	MD_MATH_DEFINE_SCALAR_OP(/)
 	MD_MATH_NEGATE_OP
+	MD_MATH_BRACKET_OP
 
 	MD_MATH_DEFINE_BOOLEAN_OP(==)
 	MD_MATH_DEFINE_BOOLEAN_OP(<=)
@@ -418,7 +438,7 @@ struct vec<t_scalar_, t_size_, false> {
 	MD_MATH_ASSIGNMENT_OP(*=, *)
 	MD_MATH_ASSIGNMENT_OP(/=, /)
 
-	MD_MATH_DEFINE_LENGTH
+	MD_MATH_DEFINE_MAGNITUDE
 	MD_MATH_DEFINE_NORMALIZE
 	MD_MATH_DEFINE_DOT
 	MD_MATH_DEFINE_ANGLE
@@ -426,13 +446,510 @@ struct vec<t_scalar_, t_size_, false> {
 
 //SIMD vectors
 template<>
-struct vec<float, 4, true> {};
+struct alignas(16) vec<float, 4, true> {
+	static constexpr size_t t_size = 4;
+	static constexpr bool t_simd = true;
+	typedef vec<float, t_size, t_simd> t_vec;
+	typedef float t_scalar;
+
+	union {
+		__m128 data_v;
+		float data[4];
+	};
+
+	MD_MATH_ALIAS(x, 0);
+	MD_MATH_ALIAS(y, 1);
+	MD_MATH_ALIAS(z, 2);
+	MD_MATH_ALIAS(w, 3);
+
+	vec() { data_v = _mm_set1_ps(0.f); }
+	vec(float s) { data_v = _mm_set1_ps(s); }
+	vec(float x, float y, float z, float w) { data_v = {x, y, z, w}; }
+	vec(const __m128 &v) { data_v = v; }
+	vec(const vec<float, 4, false> &v) {
+		data_v = {v.x(), v.y(), v.z(), v.w()};
+	}
+	~vec() {}
+
+	inline operator __m128() { return data_v; }
+
+	inline t_vec &operator=(const __m128 &v) { data_v = v; }
+	inline t_vec &operator=(const vec<float, 4, false> &v) {
+		data_v = {v.x(), v.y(), v.z(), v.w()};
+	}
+
+	inline t_vec operator-() {
+		__m128 mask = _mm_castsi128_ps(_mm_set1_epi32(~0x7FFFFFFF));
+		return _mm_xor_ps(data_v, mask);
+	}
+
+	inline t_vec operator+(const t_vec &v) {
+		return _mm_add_ps(data_v, v.data_v);
+	}
+	inline t_vec operator-(const t_vec &v) {
+		return _mm_sub_ps(data_v, v.data_v);
+	}
+	inline t_vec operator*(const t_vec &v) {
+		return _mm_mul_ps(data_v, v.data_v);
+	}
+	inline t_vec operator/(const t_vec &v) {
+		return _mm_div_ps(data_v, v.data_v);
+	}
+
+	inline t_vec compare_eq(const t_vec &v) {
+		t_vec cmp = _mm_cmpeq_ps(data_v, v.data_v);
+		return _mm_and_ps(cmp, t_vec(1.0f));
+	}
+	inline t_vec compare_neq(const t_vec &v) {
+		t_vec cmp = _mm_cmpneq_ps(data_v, v.data_v);
+		return _mm_and_ps(cmp, t_vec(1.0f));
+	}
+	inline t_vec compare_le(const t_vec &v) {
+		t_vec cmp = _mm_cmple_ps(data_v, v.data_v);
+		return _mm_and_ps(cmp, t_vec(1.0f));
+	}
+	inline t_vec compare_ge(const t_vec &v) {
+		t_vec cmp = _mm_cmpge_ps(data_v, v.data_v);
+		return _mm_and_ps(cmp, t_vec(1.0f));
+	}
+	inline t_vec compare_lt(const t_vec &v) {
+		t_vec cmp = _mm_cmplt_ps(data_v, v.data_v);
+		return _mm_and_ps(cmp, t_vec(1.0f));
+	}
+	inline t_vec compare_gt(const t_vec &v) {
+		t_vec cmp = _mm_cmpgt_ps(data_v, v.data_v);
+		return _mm_and_ps(cmp, t_vec(1.0f));
+	}
+
+	inline bool operator==(const t_vec &v) {
+		t_vec cmp = _mm_cmpeq_ps(data_v, v.data_v);
+		return !(cmp.x() || cmp.y() || cmp.z() || cmp.w());
+	}
+	inline bool operator!=(const t_vec &v) {
+		t_vec cmp = _mm_cmpneq_ps(data_v, v.data_v);
+		return !(cmp.x() || cmp.y() || cmp.z() || cmp.w());
+	}
+	inline bool operator<=(const t_vec &v) {
+		t_vec cmp = _mm_cmple_ps(data_v, v.data_v);
+		return !(cmp.x() || cmp.y() || cmp.z() || cmp.w());
+	}
+	inline bool operator>=(const t_vec &v) {
+		t_vec cmp = _mm_cmpge_ps(data_v, v.data_v);
+		return !(cmp.x() || cmp.y() || cmp.z() || cmp.w());
+	}
+	inline bool operator<(const t_vec &v) {
+		t_vec cmp = _mm_cmplt_ps(data_v, v.data_v);
+		return !(cmp.x() || cmp.y() || cmp.z() || cmp.w());
+	}
+	inline bool operator>(const t_vec &v) {
+		t_vec cmp = _mm_cmpgt_ps(data_v, v.data_v);
+		return !(cmp.x() || cmp.y() || cmp.z() || cmp.w());
+	}
+
+	inline t_vec operator+=(const t_vec &v) {
+		return data_v = _mm_add_ps(data_v, v.data_v);
+	}
+	inline t_vec operator-=(const t_vec &v) {
+		return data_v = _mm_sub_ps(data_v, v.data_v);
+	}
+	inline t_vec operator*=(const t_vec &v) {
+		return data_v = _mm_mul_ps(data_v, v.data_v);
+	}
+	inline t_vec operator/=(const t_vec &v) {
+		return data_v = _mm_div_ps(data_v, v.data_v);
+	}
+
+	inline t_scalar sum() { return data[0] + data[1] + data[2] + data[3]; }
+	inline t_scalar dot(const t_vec &v) {
+		const __m128 v0 = _mm_mul_ps(data_v, v.data_v);
+		return t_vec(v0).sum();
+	}
+	inline t_vec cross(const t_vec &v) {
+		const __m128 v0 = _mm_shuffle_ps(
+				data_v, v.data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
+		const __m128 v1 = _mm_shuffle_ps(
+				data_v, v.data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
+		const __m128 v2 = _mm_shuffle_ps(
+				data_v, v.data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
+		const __m128 v3 = _mm_shuffle_ps(
+				data_v, v.data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
+
+		return _mm_sub_ps(_mm_mul_ps(v0, v1), _mm_mul_ps(v2, v3));
+	}
+	inline t_scalar magnitude() { return std::sqrt(dot(*this)); }
+	inline void normalize() { data_v = _mm_div_ps(data_v, t_vec(magnitude())); }
+};
+
 template<>
-struct vec<float, 8, true> {};
+struct alignas(32) vec<float, 8, true> {
+	static constexpr size_t t_size = 8;
+	static constexpr bool t_simd = true;
+	typedef vec<float, t_size, t_simd> t_vec;
+	typedef float t_scalar;
+
+	union {
+		__m256 data_v;
+		float data[8];
+	};
+
+	MD_MATH_ALIAS(x, 0);
+	MD_MATH_ALIAS(y, 1);
+	MD_MATH_ALIAS(z, 2);
+	MD_MATH_ALIAS(w, 3);
+	MD_MATH_ALIAS(a, 4);
+	MD_MATH_ALIAS(b, 5);
+	MD_MATH_ALIAS(c, 6);
+	MD_MATH_ALIAS(d, 7);
+
+	vec() { data_v = _mm256_set1_ps(0.f); }
+	vec(float s) { data_v = _mm256_set1_ps(s); }
+	vec(float x, float y, float z, float w) { data_v = {x, y, z, w}; }
+	vec(const __m256 &v) { data_v = v; }
+	~vec() {}
+
+	inline operator __m256() { return data_v; }
+
+	inline t_vec &operator=(const __m256 &v) { data_v = v; }
+
+	inline t_vec operator-() {
+		__m256 mask = _mm256_castsi256_ps(_mm256_set1_epi32(~0x7FFFFFFF));
+		return _mm256_xor_ps(data_v, mask);
+	}
+
+	inline t_vec operator+(const t_vec &v) {
+		return _mm256_add_ps(data_v, v.data_v);
+	}
+	inline t_vec operator-(const t_vec &v) {
+		return _mm256_sub_ps(data_v, v.data_v);
+	}
+	inline t_vec operator*(const t_vec &v) {
+		return _mm256_mul_ps(data_v, v.data_v);
+	}
+	inline t_vec operator/(const t_vec &v) {
+		return _mm256_div_ps(data_v, v.data_v);
+	}
+
+    inline t_vec compare_eq(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_EQ_OQ);
+        return t_vec(_mm256_and_ps(cmp, _mm256_set1_ps(1.0f)));
+    }
+    inline t_vec compare_neq(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_NEQ_OQ);
+        return t_vec(_mm256_and_ps(cmp, _mm256_set1_ps(1.0f)));
+    }
+    inline t_vec compare_le(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_LE_OQ);
+        return t_vec(_mm256_and_ps(cmp, _mm256_set1_ps(1.0f)));
+    }
+    inline t_vec compare_ge(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_GE_OQ);
+        return t_vec(_mm256_and_ps(cmp, _mm256_set1_ps(1.0f)));
+    }
+    inline t_vec compare_lt(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_LT_OQ);
+        return t_vec(_mm256_and_ps(cmp, _mm256_set1_ps(1.0f)));
+    }
+    inline t_vec compare_gt(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_GT_OQ);
+        return t_vec(_mm256_and_ps(cmp, _mm256_set1_ps(1.0f)));
+    }
+
+    inline bool operator==(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_EQ_OQ);
+        return _mm256_testc_ps(cmp, _mm256_set1_ps(-1.0f));
+    }
+    inline bool operator!=(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_NEQ_OQ);
+        return _mm256_testc_ps(cmp, _mm256_set1_ps(-1.0f));
+    }
+    inline bool operator<=(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_LE_OQ);
+        return _mm256_testc_ps(cmp, _mm256_set1_ps(-1.0f));
+    }
+    inline bool operator>=(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_GE_OQ);
+        return _mm256_testc_ps(cmp, _mm256_set1_ps(-1.0f));
+    }
+    inline bool operator<(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_LT_OQ);
+        return _mm256_testc_ps(cmp, _mm256_set1_ps(-1.0f));
+    }
+    inline bool operator>(const t_vec &v) {
+        __m256 cmp = _mm256_cmp_ps(data_v, v.data_v, _CMP_GT_OQ);
+        return _mm256_testc_ps(cmp, _mm256_set1_ps(-1.0f));
+    }
+
+	inline t_vec operator+=(const t_vec &v) {
+		return data_v = _mm256_add_ps(data_v, v.data_v);
+	}
+	inline t_vec operator-=(const t_vec &v) {
+		return data_v = _mm256_sub_ps(data_v, v.data_v);
+	}
+	inline t_vec operator*=(const t_vec &v) {
+		return data_v = _mm256_mul_ps(data_v, v.data_v);
+	}
+	inline t_vec operator/=(const t_vec &v) {
+		return data_v = _mm256_div_ps(data_v, v.data_v);
+	}
+
+	inline t_scalar sum() { return data[0] + data[1] + data[2] + data[3]; }
+	inline t_scalar dot(const t_vec &v) {
+		const __m256 v0 = _mm256_mul_ps(data_v, v.data_v);
+		return t_vec(v0).sum();
+	}
+};
+
 template<>
-struct vec<double, 2, true> {};
+struct alignas(16) vec<double, 2, true> {
+	static constexpr size_t t_size = 2;
+	static constexpr bool t_simd = true;
+	typedef vec<double, t_size, t_simd> t_vec;
+	typedef double t_scalar;
+
+	union {
+		__m128d data_v;
+		double data[2];
+	};
+
+	MD_MATH_ALIAS(x, 0);
+	MD_MATH_ALIAS(y, 1);
+
+	vec() { data_v = _mm_set1_pd(0.0); }
+	vec(double s) { data_v = _mm_set1_pd(s); }
+	vec(double x, double y) { data_v = _mm_set_pd(y, x); }
+	vec(const __m128d &v) { data_v = v; }
+	~vec() {}
+
+	inline operator __m128d() { return data_v; }
+
+	inline t_vec &operator=(const __m128d &v) { data_v = v; return *this; }
+
+	inline t_vec operator-() {
+		__m128d mask = _mm_castsi128_pd(_mm_set1_epi64x(~0x7FFFFFFFFFFFFFFF));
+		return _mm_xor_pd(data_v, mask);
+	}
+
+	inline t_vec operator+(const t_vec &v) {
+		return _mm_add_pd(data_v, v.data_v);
+	}
+	inline t_vec operator-(const t_vec &v) {
+		return _mm_sub_pd(data_v, v.data_v);
+	}
+	inline t_vec operator*(const t_vec &v) {
+		return _mm_mul_pd(data_v, v.data_v);
+	}
+	inline t_vec operator/(const t_vec &v) {
+		return _mm_div_pd(data_v, v.data_v);
+	}
+
+	inline t_vec compare_eq(const t_vec &v) {
+		__m128d cmp = _mm_cmpeq_pd(data_v, v.data_v);
+		return t_vec(_mm_and_pd(cmp, _mm_set1_pd(1.0)));
+	}
+	inline t_vec compare_neq(const t_vec &v) {
+		__m128d cmp = _mm_cmpneq_pd(data_v, v.data_v);
+		return t_vec(_mm_and_pd(cmp, _mm_set1_pd(1.0)));
+	}
+	inline t_vec compare_le(const t_vec &v) {
+		__m128d cmp = _mm_cmple_pd(data_v, v.data_v);
+		return t_vec(_mm_and_pd(cmp, _mm_set1_pd(1.0)));
+	}
+	inline t_vec compare_ge(const t_vec &v) {
+		__m128d cmp = _mm_cmpge_pd(data_v, v.data_v);
+		return t_vec(_mm_and_pd(cmp, _mm_set1_pd(1.0)));
+	}
+	inline t_vec compare_lt(const t_vec &v) {
+		__m128d cmp = _mm_cmplt_pd(data_v, v.data_v);
+		return t_vec(_mm_and_pd(cmp, _mm_set1_pd(1.0)));
+	}
+	inline t_vec compare_gt(const t_vec &v) {
+		__m128d cmp = _mm_cmpgt_pd(data_v, v.data_v);
+		return t_vec(_mm_and_pd(cmp, _mm_set1_pd(1.0)));
+	}
+
+	inline bool operator==(const t_vec &v) {
+		__m128d cmp = _mm_cmpeq_pd(data_v, v.data_v);
+		return _mm_testc_pd(cmp, _mm_set1_pd(-1.0));
+	}
+	inline bool operator!=(const t_vec &v) {
+		__m128d cmp = _mm_cmpneq_pd(data_v, v.data_v);
+		return !_mm_testc_pd(cmp, _mm_set1_pd(-1.0));
+	}
+	inline bool operator<=(const t_vec &v) {
+		__m128d cmp = _mm_cmple_pd(data_v, v.data_v);
+		return _mm_testc_pd(cmp, _mm_set1_pd(-1.0));
+	}
+	inline bool operator>=(const t_vec &v) {
+		__m128d cmp = _mm_cmpge_pd(data_v, v.data_v);
+		return _mm_testc_pd(cmp, _mm_set1_pd(-1.0));
+	}
+	inline bool operator<(const t_vec &v) {
+		__m128d cmp = _mm_cmplt_pd(data_v, v.data_v);
+		return _mm_testc_pd(cmp, _mm_set1_pd(-1.0));
+	}
+	inline bool operator>(const t_vec &v) {
+		__m128d cmp = _mm_cmpgt_pd(data_v, v.data_v);
+		return _mm_testc_pd(cmp, _mm_set1_pd(-1.0));
+	}
+
+	inline t_vec operator+=(const t_vec &v) {
+		return data_v = _mm_add_pd(data_v, v.data_v);
+	}
+	inline t_vec operator-=(const t_vec &v) {
+		return data_v = _mm_sub_pd(data_v, v.data_v);
+	}
+	inline t_vec operator*=(const t_vec &v) {
+		return data_v = _mm_mul_pd(data_v, v.data_v);
+	}
+	inline t_vec operator/=(const t_vec &v) {
+		return data_v = _mm_div_pd(data_v, v.data_v);
+	}
+
+	inline t_scalar sum() { return data[0] + data[1]; }
+	inline t_scalar dot(const t_vec &v) {
+		const __m128d v0 = _mm_mul_pd(data_v, v.data_v);
+		return t_vec(v0).sum();
+	}
+	inline t_scalar magnitude() { return std::sqrt(dot(*this)); }
+	inline void normalize() { data_v = _mm_div_pd(data_v, t_vec(magnitude())); }
+};
+
 template<>
-struct vec<double, 4, true> {};
+struct alignas(32) vec<double, 4, true> {
+	static constexpr size_t t_size = 4;
+	static constexpr bool t_simd = true;
+	typedef vec<double, t_size, t_simd> t_vec;
+	typedef double t_scalar;
+	union {
+		__m256d data_v;
+		double data[4];
+	};
+
+	MD_MATH_ALIAS(x, 0);
+	MD_MATH_ALIAS(y, 1);
+	MD_MATH_ALIAS(z, 2);
+	MD_MATH_ALIAS(w, 3);
+
+	vec() { data_v = _mm256_set1_pd(0.0); }
+	vec(double s) { data_v = _mm256_set1_pd(s); }
+	vec(double x, float y, float z, float w) { data_v = {x, y, z, w}; }
+	vec(const __m256d &v) { data_v = v; }
+	vec(const vec<double, 4, false> &v) {
+		data_v = {v.x(), v.y(), v.z(), v.w()};
+	}
+	~vec() {}
+
+	inline operator __m256d() { return data_v; }
+
+	inline t_vec &operator=(const __m256d &v) { data_v = v; }
+	inline t_vec &operator=(const vec<double, 4, false> &v) {
+		data_v = {v.x(), v.y(), v.z(), v.w()};
+	}
+
+	inline t_vec operator-() {
+		__m256d mask =
+				_mm256_castsi256_pd(_mm256_set1_epi64x(~0x7FFFFFFFFFFFFFFF));
+		return _mm256_xor_pd(data_v, mask);
+	}
+
+	inline t_vec operator+(const t_vec &v) {
+		return _mm256_add_pd(data_v, v.data_v);
+	}
+	inline t_vec operator-(const t_vec &v) {
+		return _mm256_sub_pd(data_v, v.data_v);
+	}
+	inline t_vec operator*(const t_vec &v) {
+		return _mm256_mul_pd(data_v, v.data_v);
+	}
+	inline t_vec operator/(const t_vec &v) {
+		return _mm256_div_pd(data_v, v.data_v);
+	}
+
+	inline t_vec compare_eq(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_EQ_OQ);
+		return t_vec(cmp);
+	}
+	inline t_vec compare_neq(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_NEQ_OQ);
+		return t_vec(cmp);
+	}
+	inline t_vec compare_le(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_LE_OQ);
+		return t_vec(cmp);
+	}
+	inline t_vec compare_ge(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_GE_OQ);
+		return t_vec(cmp);
+	}
+	inline t_vec compare_lt(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_LT_OQ);
+		return t_vec(cmp);
+	}
+	inline t_vec compare_gt(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_GT_OQ);
+		return t_vec(cmp);
+	}
+
+	inline bool operator==(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_EQ_OQ);
+		return _mm256_testc_pd(cmp, _mm256_set1_pd(-1.0));
+	}
+	inline bool operator!=(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_NEQ_OQ);
+		return _mm256_testc_pd(cmp, _mm256_set1_pd(-1.0));
+	}
+	inline bool operator<=(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_LE_OQ);
+		return _mm256_testc_pd(cmp, _mm256_set1_pd(-1.0));
+	}
+	inline bool operator>=(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_GE_OQ);
+		return _mm256_testc_pd(cmp, _mm256_set1_pd(-1.0));
+	}
+	inline bool operator<(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_LT_OQ);
+		return _mm256_testc_pd(cmp, _mm256_set1_pd(-1.0));
+	}
+	inline bool operator>(const t_vec &v) {
+		__m256d cmp = _mm256_cmp_pd(data_v, v.data_v, _CMP_GT_OQ);
+		return _mm256_testc_pd(cmp, _mm256_set1_pd(-1.0));
+	}
+
+	inline t_vec operator+=(const t_vec &v) {
+		return data_v = _mm256_add_pd(data_v, v.data_v);
+	}
+	inline t_vec operator-=(const t_vec &v) {
+		return data_v = _mm256_sub_pd(data_v, v.data_v);
+	}
+	inline t_vec operator*=(const t_vec &v) {
+		return data_v = _mm256_mul_pd(data_v, v.data_v);
+	}
+	inline t_vec operator/=(const t_vec &v) {
+		return data_v = _mm256_div_pd(data_v, v.data_v);
+	}
+
+	inline t_scalar sum() { return data[0] + data[1] + data[2] + data[3]; }
+	inline t_scalar dot(const t_vec &v) {
+		const __m256d v0 = _mm256_mul_pd(data_v, v.data_v);
+		return t_vec(v0).sum();
+	}
+	inline t_vec cross(const t_vec &v) {
+		const __m256d v0 = _mm256_shuffle_pd(
+				data_v, v.data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
+		const __m256d v1 = _mm256_shuffle_pd(
+				data_v, v.data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
+		const __m256d v2 = _mm256_shuffle_pd(
+				data_v, v.data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
+		const __m256d v3 = _mm256_shuffle_pd(
+				data_v, v.data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
+
+		return _mm256_sub_pd(_mm256_mul_pd(v0, v1), _mm256_mul_pd(v2, v3));
+	}
+	inline t_scalar magnitude() { return std::sqrt(dot(*this)); }
+	inline void normalize() {
+		data_v = _mm256_div_pd(data_v, t_vec(magnitude()));
+	}
+};
 
 typedef vec<unsigned int, 1, false> uvec1_s;
 typedef vec<unsigned int, 2, false> uvec2_s;
@@ -484,4 +1001,4 @@ using ivec4 = ivec4_s;
 
 }// namespace md_math
 
-#endif// !VECTOR_H
+#endif// VECTOR_H
