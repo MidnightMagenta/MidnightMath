@@ -1064,18 +1064,27 @@ struct alignas(16) vec<float, 4, true> {
 		return t_vec(v0).sum();
 	}
 	inline t_vec cross(const t_vec &v) {
-		const __m128 v0 = _mm_shuffle_ps(
-				data_v, v.data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
-		const __m128 v1 = _mm_shuffle_ps(
-				data_v, v.data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
-		const __m128 v2 = _mm_shuffle_ps(
-				data_v, v.data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
-		const __m128 v3 = _mm_shuffle_ps(
-				data_v, v.data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
+		const __m128 t1 = _mm_shuffle_ps(
+				data_v, data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
+		const __m128 t2 = _mm_shuffle_ps(
+				v.data_v, v.data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
+		const __m128 t3 = _mm_shuffle_ps(
+				data_v, data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
+		const __m128 t4 = _mm_shuffle_ps(
+				v.data_v, v.data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
 
-		return _mm_sub_ps(_mm_mul_ps(v0, v1), _mm_mul_ps(v2, v3));
+		return _mm_sub_ps(_mm_mul_ps(t1, t2), _mm_mul_ps(t3, t4));
 	}
-	inline t_scalar magnitude() { return std::sqrt(dot(*this)); }
+	inline t_scalar magnitude() {
+		__m128 sqrd = _mm_mul_ps(data_v, data_v);
+		return std::sqrt(sqrd.m128_f32[0] + sqrd.m128_f32[1] +
+						 sqrd.m128_f32[2]);
+	}
+	inline t_scalar magnitude4d() {
+		__m128 sqrd = _mm_mul_ps(data_v, data_v);
+		return std::sqrt(sqrd.m128_f32[0] + sqrd.m128_f32[1] +
+						 sqrd.m128_f32[2] + sqrd.m128_f32[3]);
+	}
 	inline void normalize() { data_v = _mm_div_ps(data_v, t_vec(magnitude())); }
 };
 
@@ -1193,7 +1202,16 @@ struct alignas(16) vec<double, 2, true> {
 		const __m128d v0 = _mm_mul_pd(data_v, v.data_v);
 		return t_vec(v0).sum();
 	}
-	inline t_scalar magnitude() { return std::sqrt(dot(*this)); }
+	inline t_scalar magnitude() {
+		__m128d sqrd = _mm_mul_pd(data_v, data_v);
+		return std::sqrt(sqrd.m128d_f64[0] + sqrd.m128d_f64[1] +
+						 sqrd.m128d_f64[2]);
+	}
+	inline t_scalar magnitude4d() {
+		__m128d sqrd = _mm_mul_pd(data_v, data_v);
+		return std::sqrt(sqrd.m128d_f64[0] + sqrd.m128d_f64[1] +
+						 sqrd.m128d_f64[2] + sqrd.m128d_f64[3]);
+	}
 	inline void normalize() { data_v = _mm_div_pd(data_v, t_vec(magnitude())); }
 };
 
@@ -1317,18 +1335,27 @@ struct alignas(32) vec<double, 4, true> {
 		return t_vec(v0).sum();
 	}
 	inline t_vec cross(const t_vec &v) {
-		const __m256d v0 = _mm256_shuffle_pd(
-				data_v, v.data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
-		const __m256d v1 = _mm256_shuffle_pd(
-				data_v, v.data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
-		const __m256d v2 = _mm256_shuffle_pd(
-				data_v, v.data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
-		const __m256d v3 = _mm256_shuffle_pd(
-				data_v, v.data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
+		const __m256d t1 = _mm256_permute4x64_pd(
+				data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
+		const __m256d t2 = _mm256_permute4x64_pd(
+				v.data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
+		const __m256d t3 = _mm256_permute4x64_pd(
+				data_v, MD_SHUFFLE(MD_S_Z, MD_S_X, MD_S_Y, MD_S_W));
+		const __m256d t4 = _mm256_permute4x64_pd(
+				v.data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
 
-		return _mm256_sub_pd(_mm256_mul_pd(v0, v1), _mm256_mul_pd(v2, v3));
+		return _mm256_sub_pd(_mm256_mul_pd(t1, t2), _mm256_mul_pd(t3, t4));
 	}
-	inline t_scalar magnitude() { return std::sqrt(dot(*this)); }
+	inline t_scalar magnitude() {
+		__m256d sqrd = _mm256_mul_pd(data_v, data_v);
+		return std::sqrt(sqrd.m256d_f64[0] + sqrd.m256d_f64[1] +
+						 sqrd.m256d_f64[2]);
+	}
+	inline t_scalar magnitude4d() {
+		__m256d sqrd = _mm256_mul_pd(data_v, data_v);
+		return std::sqrt(sqrd.m256d_f64[0] + sqrd.m256d_f64[1] +
+						 sqrd.m256d_f64[2] + sqrd.m256d_f64[3]);
+	}
 	inline void normalize() {
 		data_v = _mm256_div_pd(data_v, t_vec(magnitude()));
 	}
