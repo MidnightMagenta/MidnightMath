@@ -85,7 +85,7 @@ struct matrix<t_scalar_, t_size, false> {
 		return GenericVectorMultiply(*this, v);
 	}
 
-	inline t_matrix &multiply(const t_matrix &mat, t_matrix *target) {
+	inline t_matrix &multiply(const t_matrix &mat, t_matrix *target) const {
 		assert(&mat != target);
 		assert(this != target);
 		return GenericMatrixMultiply(*this, mat, target);
@@ -93,7 +93,7 @@ struct matrix<t_scalar_, t_size, false> {
 
 	inline t_matrix operator*(const t_matrix &mat) const {
 		t_matrix result;
-		return mul(mat, result);
+		return multiply(mat, &result);
 	}
 
 	inline t_matrix operator*=(const t_matrix &m) {
@@ -171,7 +171,7 @@ struct matrix<t_scalar_, 4, true> {
 			   v_w * columns[3];
 	}
 
-	inline t_matrix &mul(const t_matrix &m, t_matrix *target) const {
+	inline t_matrix &multiply(const t_matrix &m, t_matrix *target) const {
 		assert(&m != target);
 		assert(this != target);
 
@@ -185,7 +185,7 @@ struct matrix<t_scalar_, 4, true> {
 
 	inline t_matrix operator*(const t_matrix &v) const {
 		t_matrix result;
-		return mul(v, &result);
+		return multiply(v, &result);
 	}
 
 	inline t_matrix operator*=(const t_matrix &v) {

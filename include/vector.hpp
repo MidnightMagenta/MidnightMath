@@ -125,49 +125,49 @@ struct vec<t_scalar_, 2, false> {
 		return *this;
 	}
 
-	inline t_vec operator+(const t_vec &b) {
+	inline t_vec operator+(const t_vec &b) const {
 		t_vec result;
 		result.data[0] = data[0] + b.data[0];
 		result.data[1] = data[1] + b.data[1];
 		return result;
 	}
-	inline t_vec operator-(const t_vec &b) {
+	inline t_vec operator-(const t_vec &b) const {
 		t_vec result;
 		result.data[0] = data[0] - b.data[0];
 		result.data[1] = data[1] - b.data[1];
 		return result;
 	}
-	inline t_vec operator/(const t_vec &b) {
+	inline t_vec operator/(const t_vec &b) const {
 		t_vec result;
 		result.data[0] = data[0] / b.data[0];
 		result.data[1] = data[1] / b.data[1];
 		return result;
 	}
-	inline t_vec operator*(const t_vec &b) {
+	inline t_vec operator*(const t_vec &b) const {
 		t_vec result;
 		result.data[0] = data[0] * b.data[0];
 		result.data[1] = data[1] * b.data[1];
 		return result;
 	}
-	inline t_vec operator+(t_scalar b) {
+	inline t_vec operator+(t_scalar b) const {
 		t_vec result;
 		result.data[0] = data[0] + b;
 		result.data[1] = data[1] + b;
 		return result;
 	}
-	inline t_vec operator-(t_scalar b) {
+	inline t_vec operator-(t_scalar b) const {
 		t_vec result;
 		result.data[0] = data[0] - b;
 		result.data[1] = data[1] - b;
 		return result;
 	}
-	inline t_vec operator*(t_scalar b) {
+	inline t_vec operator*(t_scalar b) const {
 		t_vec result;
 		result.data[0] = data[0] * b;
 		result.data[1] = data[1] * b;
 		return result;
 	}
-	inline t_vec operator/(t_scalar b) {
+	inline t_vec operator/(t_scalar b) const {
 		t_vec result;
 		result.data[0] = data[0] / b;
 		result.data[1] = data[1] / b;
@@ -343,50 +343,50 @@ struct vec<t_scalar_, 3, false> {
 		return *this;
 	}
 
-	inline t_vec operator+(const t_vec &b) {
+	inline t_vec operator+(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] + b.data[i];
 		}
 		return result;
 	}
-	inline t_vec operator-(const t_vec &b) {
+	inline t_vec operator-(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] - b.data[i];
 		}
 		return result;
 	}
-	inline t_vec operator/(const t_vec &b) {
+	inline t_vec operator/(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] / b.data[i];
 		}
 		return result;
 	}
-	inline t_vec operator*(const t_vec &b) {
+	inline t_vec operator*(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] * b.data[i];
 		}
 		return result;
 	}
-	inline t_vec operator+(t_scalar b) {
+	inline t_vec operator+(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] + b; }
 		return result;
 	}
-	inline t_vec operator-(t_scalar b) {
+	inline t_vec operator-(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] - b; }
 		return result;
 	}
-	inline t_vec operator*(t_scalar b) {
+	inline t_vec operator*(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] * b; }
 		return result;
 	}
-	inline t_vec operator/(t_scalar b) {
+	inline t_vec operator/(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] / b; }
 		return result;
@@ -568,50 +568,50 @@ struct vec<t_scalar_, 4, false> {
 		return *this;
 	}
 
-	inline t_vec operator+(const t_vec &b) {
+	inline t_vec operator+(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] + b.data[i];
 		}
 		return result;
 	}
-	inline t_vec operator-(const t_vec &b) {
+	inline t_vec operator-(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] - b.data[i];
 		}
 		return result;
 	}
-	inline t_vec operator/(const t_vec &b) {
+	inline t_vec operator/(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] / b.data[i];
 		}
 		return result;
 	}
-	inline t_vec operator*(const t_vec &b) {
+	inline t_vec operator*(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] * b.data[i];
 		}
 		return result;
 	}
-	inline t_vec operator+(t_scalar b) {
+	inline t_vec operator+(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] + b; }
 		return result;
 	}
-	inline t_vec operator-(t_scalar b) {
+	inline t_vec operator-(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] - b; }
 		return result;
 	}
-	inline t_vec operator*(t_scalar b) {
+	inline t_vec operator*(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] * b; }
 		return result;
 	}
-	inline t_vec operator/(t_scalar b) {
+	inline t_vec operator/(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] / b; }
 		return result;
@@ -805,7 +805,7 @@ struct vec<t_scalar_, t_size_, false> {
 		return *this;
 	}
 
-	inline t_vec operator+(const t_vec &b) {
+	inline t_vec operator+(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] + b.data[i];
@@ -813,7 +813,7 @@ struct vec<t_scalar_, t_size_, false> {
 		return result;
 	}
 
-	inline t_vec operator-(const t_vec &b) {
+	inline t_vec operator-(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] - b.data[i];
@@ -821,7 +821,7 @@ struct vec<t_scalar_, t_size_, false> {
 		return result;
 	}
 
-	inline t_vec operator/(const t_vec &b) {
+	inline t_vec operator/(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] / b.data[i];
@@ -829,7 +829,7 @@ struct vec<t_scalar_, t_size_, false> {
 		return result;
 	}
 
-	inline t_vec operator*(const t_vec &b) {
+	inline t_vec operator*(const t_vec &b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) {
 			result.data[i] = data[i] * b.data[i];
@@ -837,25 +837,25 @@ struct vec<t_scalar_, t_size_, false> {
 		return result;
 	}
 
-	inline t_vec operator+(t_scalar b) {
+	inline t_vec operator+(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] + b; }
 		return result;
 	}
 
-	inline t_vec operator-(t_scalar b) {
+	inline t_vec operator-(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] - b; }
 		return result;
 	}
 
-	inline t_vec operator*(t_scalar b) {
+	inline t_vec operator*(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] * b; }
 		return result;
 	}
 
-	inline t_vec operator/(t_scalar b) {
+	inline t_vec operator/(t_scalar b) const {
 		t_vec result;
 		for (size_t i = 0; i < t_size; i++) { result.data[i] = data[i] / b; }
 		return result;
@@ -994,21 +994,21 @@ struct alignas(16) vec<float, 4, true> {
 	}
 
 
-	inline t_vec operator-() {
+	inline t_vec operator-() const {
 		__m128 mask = _mm_castsi128_ps(_mm_set1_epi32(~0x7FFFFFFF));
 		return _mm_xor_ps(data_v, mask);
 	}
 
-	inline t_vec operator+(const t_vec &v) {
+	inline t_vec operator+(const t_vec &v) const {
 		return _mm_add_ps(data_v, v.data_v);
 	}
-	inline t_vec operator-(const t_vec &v) {
+	inline t_vec operator-(const t_vec &v) const {
 		return _mm_sub_ps(data_v, v.data_v);
 	}
-	inline t_vec operator*(const t_vec &v) {
+	inline t_vec operator*(const t_vec &v) const {
 		return _mm_mul_ps(data_v, v.data_v);
 	}
-	inline t_vec operator/(const t_vec &v) {
+	inline t_vec operator/(const t_vec &v) const {
 		return _mm_div_ps(data_v, v.data_v);
 	}
 
@@ -1139,16 +1139,16 @@ struct alignas(16) vec<double, 2, true> {
 		return _mm_xor_pd(data_v, mask);
 	}
 
-	inline t_vec operator+(const t_vec &v) {
+	inline t_vec operator+(const t_vec &v) const {
 		return _mm_add_pd(data_v, v.data_v);
 	}
-	inline t_vec operator-(const t_vec &v) {
+	inline t_vec operator-(const t_vec &v) const {
 		return _mm_sub_pd(data_v, v.data_v);
 	}
-	inline t_vec operator*(const t_vec &v) {
+	inline t_vec operator*(const t_vec &v) const {
 		return _mm_mul_pd(data_v, v.data_v);
 	}
-	inline t_vec operator/(const t_vec &v) {
+	inline t_vec operator/(const t_vec &v) const {
 		return _mm_div_pd(data_v, v.data_v);
 	}
 
@@ -1266,16 +1266,16 @@ struct alignas(32) vec<double, 4, true> {
 		return _mm256_xor_pd(data_v, mask);
 	}
 
-	inline t_vec operator+(const t_vec &v) {
+	inline t_vec operator+(const t_vec &v) const {
 		return _mm256_add_pd(data_v, v.data_v);
 	}
-	inline t_vec operator-(const t_vec &v) {
+	inline t_vec operator-(const t_vec &v) const {
 		return _mm256_sub_pd(data_v, v.data_v);
 	}
-	inline t_vec operator*(const t_vec &v) {
+	inline t_vec operator*(const t_vec &v) const {
 		return _mm256_mul_pd(data_v, v.data_v);
 	}
-	inline t_vec operator/(const t_vec &v) {
+	inline t_vec operator/(const t_vec &v) const {
 		return _mm256_div_pd(data_v, v.data_v);
 	}
 
