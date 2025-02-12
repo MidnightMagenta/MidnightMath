@@ -78,10 +78,10 @@ inline t_matrix OrthographicProjectionMatrix(typename t_matrix::t_scalar left,
 	result.columns[0].data[0] = 2 / (right - left);
 	result.columns[1].data[1] = 2 / (top - bottom);
 	result.columns[2].data[2] = -2 / (far - near);
-	result.columns[3] = {-((right + left) / (right - left)),
-						 -((top + bottom) / (top - bottom)),
-						 -((far + near) / (far - near)),
-						 t_matrix::t_scalar(1.0)};
+	result.columns[3] = t_matrix::t_vec({-((right + left) / (right - left)),
+										 -((top + bottom) / (top - bottom)),
+										 -((far + near) / (far - near)),
+										 t_matrix::t_scalar(1.0)});
 	return result;
 }
 
@@ -91,16 +91,18 @@ inline t_matrix FrustrumProjectionMatrix(typename t_matrix::t_scalar fov,
 										 typename t_matrix::t_scalar near,
 										 typename t_matrix::t_scalar far) {
 	t_matrix result = result.SetIdentity();
-	result.columns[0] = {(2 * near) / (aspect * std::tan(fov / 2)),
-						 t_matrix::t_scalar(0), t_matrix::t_scalar(0),
-						 t_matrix::t_scalar(0)};
-	result.columns[1] = {t_matrix::t_scalar(0), (2 * near) / std::tan(fov / 2),
-						 t_matrix::t_scalar(0), t_matrix::t_scalar(0)};
-	result.columns[2] = {t_matrix::t_scalar(0), t_matrix::t_scalar(0),
-						 -(far + near) / (far - near), t_matrix::t_scalar(-1)};
-	result.columns[3] = {t_matrix::t_scalar(0), t_matrix::t_scalar(0),
-						 -(2 * far * near) / (far - near),
-						 t_matrix::t_scalar(0)};
+	result.columns[0] = t_matrix::t_vec(
+			{(2 * near) / (aspect * std::tan(fov / 2)), t_matrix::t_scalar(0),
+			 t_matrix::t_scalar(0), t_matrix::t_scalar(0)});
+	result.columns[1] = t_matrix::t_vec(
+			{t_matrix::t_scalar(0), (2 * near) / std::tan(fov / 2),
+			 t_matrix::t_scalar(0), t_matrix::t_scalar(0)});
+	result.columns[2] = t_matrix::t_vec(
+			{t_matrix::t_scalar(0), t_matrix::t_scalar(0),
+			 -(far + near) / (far - near), t_matrix::t_scalar(-1)});
+	result.columns[3] = t_matrix::t_vec(
+			{t_matrix::t_scalar(0), t_matrix::t_scalar(0),
+			 -(2 * far * near) / (far - near), t_matrix::t_scalar(0)});
 	return result;
 }
 }// namespace md_math

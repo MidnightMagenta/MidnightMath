@@ -35,6 +35,8 @@ add_library("${ProjectName}" STATIC
         include/constants.hpp
         include/matrix.hpp
         include/matrix_library.hpp
+
+	    include/md_math.hpp
 )
 
 add_dependencies("${ProjectName}" q_start_clock)

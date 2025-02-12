@@ -73,7 +73,7 @@ TEST(NonSimdMatrix, MatrixMultiply) {
 
 TEST(SimdMatrix, SetIdentity) {
 	mat44_v matrix;
-	matrix.set_identity();
+	matrix.SetIdentity();
 
 	EXPECT_NEAR(matrix.columns[0].data[0], 1.0f, TOLERANCE);
 	EXPECT_NEAR(matrix.columns[0].data[1], 0.0f, TOLERANCE);
@@ -104,7 +104,7 @@ TEST(SimdMatrix, SetTranspose) {
 	matrix.columns[3] = vec4{13.0f, 14.0f, 15.0f, 16.0f};
 
 	mat44_v transposed;
-	matrix.set_transpose(&transposed);
+	matrix.SetTranspose(&transposed);
 
 	EXPECT_NEAR(transposed.columns[0].data[0], 1.0f, TOLERANCE);
 	EXPECT_NEAR(transposed.columns[0].data[1], 5.0f, TOLERANCE);
@@ -217,6 +217,87 @@ TEST(MatrixLibraryTest, OrthoProjectionTest) {
 
 TEST(MatrixLibraryTest, PerspectiveProjectionTest) {
 	mat44_s mat = FrustrumProjectionMatrix<mat44_s>(90.0f, 16.0f / 9.0f, 0.1f,
+													100.0f);
+
+	EXPECT_NEAR(mat.columns[0].data[0],
+				(2.0f * 0.1f) / (16.0f / 9.0f * std::tan(90.0f / 2.0f)),
+				TOLERANCE);
+	EXPECT_NEAR(mat.columns[0].data[1], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[0].data[2], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[0].data[3], 0.0f, TOLERANCE);
+
+	EXPECT_NEAR(mat.columns[1].data[0], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[1].data[1], (2.0f * 0.1f) / std::tan(90.0f / 2.0f),
+				TOLERANCE);
+	EXPECT_NEAR(mat.columns[1].data[2], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[1].data[3], 0.0f, TOLERANCE);
+
+	EXPECT_NEAR(mat.columns[2].data[0], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[2].data[1], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[2].data[2], -(100.0f + 0.1f) / (100.0f - 0.1f),
+				TOLERANCE);
+	EXPECT_NEAR(mat.columns[2].data[3], -1.0f, TOLERANCE);
+
+	EXPECT_NEAR(mat.columns[3].data[0], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[3].data[1], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[3].data[2],
+				-(2.0f * 100.0f * 0.1f) / (100.0f - 0.1f), TOLERANCE);
+	EXPECT_NEAR(mat.columns[3].data[3], 0.0f, TOLERANCE);
+}
+
+TEST(SimdMatrixLibraryTest, RotationMatrix) {
+	mat44_v mat = RotationMatrix<mat44_v>(0.f, pi_f / 2, 0.f);
+	vec4_v vec = {1.f, 0.f, 0.f, 1.f};
+	vec = mat * vec;
+	EXPECT_NEAR(vec.x(), 0.f, 1e-5);
+	EXPECT_NEAR(vec.y(), 0.f, 1e-5);
+	EXPECT_NEAR(vec.z(), -1.f, 1e-5);
+}
+
+TEST(SimdMatrixLibraryTest, TranslationMatrix) {
+	mat44_v mat = TranslationMatrix<mat44_v>(0.f, 1.f, 0.f);
+	vec4_v vec = {0.f, -1.f, 0.f, 1.f};
+	vec = mat * vec;
+	EXPECT_NEAR(vec.x(), 0.f, 1e-5);
+	EXPECT_NEAR(vec.y(), 0.f, 1e-5);
+	EXPECT_NEAR(vec.z(), 0.f, 1e-5);
+}
+
+TEST(SimdMatrixLibraryTest, ScaleTest) {
+	mat44_v mat = ScaleMatrix<mat44_v>(0.f, 1.f, 0.f);
+	vec4_v vec = {0.f, -1.f, 0.f, 1.f};
+	vec = mat * vec;
+	EXPECT_NEAR(vec.x(), 0.f, 1e-5);
+	EXPECT_NEAR(vec.y(), -1.f, 1e-5);
+	EXPECT_NEAR(vec.z(), 0.f, 1e-5);
+}
+
+TEST(SimdMatrixLibraryTest, OrthoProjectionTest) {
+	mat44_v mat = OrthographicProjectionMatrix<mat44_v>(-1, 1, -1, 1, 0.1, 100);
+
+	EXPECT_NEAR(mat.columns[0].data[0], 1.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[0].data[1], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[0].data[2], 0.f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[0].data[3], 0.0f, TOLERANCE);
+
+	EXPECT_NEAR(mat.columns[1].data[0], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[1].data[1], 1.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[1].data[2], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[1].data[3], 0.0f, TOLERANCE);
+
+	EXPECT_NEAR(mat.columns[2].data[0], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[2].data[1], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[2].data[2], -(2.f / 99.9f), TOLERANCE);
+	EXPECT_NEAR(mat.columns[2].data[3], 0.0f, TOLERANCE);
+
+	EXPECT_NEAR(mat.columns[3].data[0], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[3].data[1], 0.0f, TOLERANCE);
+	EXPECT_NEAR(mat.columns[3].data[2], -(100.1 / 99.9), TOLERANCE);
+	EXPECT_NEAR(mat.columns[3].data[3], 1.0f, TOLERANCE);
+}
+
+TEST(SimdMatrixLibraryTest, PerspectiveProjectionTest) {
+	mat44_v mat = FrustrumProjectionMatrix<mat44_v>(90.0f, 16.0f / 9.0f, 0.1f,
 													100.0f);
 
 	EXPECT_NEAR(mat.columns[0].data[0],

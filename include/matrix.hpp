@@ -123,7 +123,7 @@ struct matrix<t_scalar_, 4, true> {
 		columns[3] = c3;
 	}
 
-	inline t_matrix &set_identity() {
+	inline t_matrix &SetIdentity() {
 		columns[0] = vec4{1.0f, 0.0f, 0.0f, 0.0f};
 		columns[1] = vec4{0.0f, 1.0f, 0.0f, 0.0f};
 		columns[2] = vec4{0.0f, 0.0f, 1.0f, 0.0f};
@@ -132,7 +132,7 @@ struct matrix<t_scalar_, 4, true> {
 		return *this;
 	}
 
-	inline t_matrix &set_transpose(t_matrix *target) const {
+	inline t_matrix &SetTranspose(t_matrix *target) const {
 		const __m128 t0 =
 				_mm_shuffle_ps(columns[0].data_v, columns[1].data_v, 0x44);
 		const __m128 t1 =
@@ -151,10 +151,17 @@ struct matrix<t_scalar_, 4, true> {
 	}
 
 
-	inline t_matrix &set_transpose() { return set_transpose(this); }
+	inline t_matrix &SetTranspose() { return SetTranspose(this); }
 	inline t_matrix transpose() {
 		t_matrix result;
-		return set_transpose(&result);
+		return SetTranspose(&result);
+	}
+
+	inline void operator=(std::initializer_list<t_vec> vecs) {
+		columns[0] = vecs.begin()[0];
+		columns[1] = vecs.begin()[1];
+		columns[2] = vecs.begin()[2];
+		columns[3] = vecs.begin()[3];
 	}
 
 	inline t_vec operator*(const t_vec &v) const {
