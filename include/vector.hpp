@@ -8,7 +8,8 @@
 
 namespace md_math {
 template<typename t_scalar, size_t t_size, bool t_enable_simd>
-struct vec {};
+struct vec { /*void*/
+};
 
 #define MD_MATH_ALIAS(name, index)                                             \
 	constexpr t_scalar &name() { return data[index]; }                         \
@@ -983,10 +984,15 @@ struct alignas(16) vec<float, 4, true> {
 
 	inline operator __m128() { return data_v; }
 
-	inline t_vec &operator=(const __m128 &v) { data_v = v; }
+	inline t_vec &operator=(const __m128 &v) {
+		data_v = v;
+		return *this;
+	}
 	inline t_vec &operator=(const vec<float, 4, false> &v) {
 		data_v = {v.x(), v.y(), v.z(), v.w()};
+		return *this;
 	}
+
 
 	inline t_vec operator-() {
 		__m128 mask = _mm_castsi128_ps(_mm_set1_epi32(~0x7FFFFFFF));
@@ -1070,11 +1076,11 @@ struct alignas(16) vec<float, 4, true> {
 	}
 
 	inline t_scalar sum() { return data[0] + data[1] + data[2] + data[3]; }
-	inline t_scalar dot(const t_vec &v) {
+	inline t_scalar dot(const t_vec &v) const {
 		const __m128 v0 = _mm_mul_ps(data_v, v.data_v);
 		return t_vec(v0).sum();
 	}
-	inline t_vec cross(const t_vec &v) {
+	inline t_vec cross(const t_vec &v) const {
 		const __m128 t1 = _mm_shuffle_ps(
 				data_v, data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
 		const __m128 t2 = _mm_shuffle_ps(
@@ -1086,14 +1092,17 @@ struct alignas(16) vec<float, 4, true> {
 
 		return _mm_sub_ps(_mm_mul_ps(t1, t2), _mm_mul_ps(t3, t4));
 	}
-	inline t_scalar magnitude() {
+	inline t_scalar magnitude() const {
 		__m128 res = {x(), y(), z(), 0.f};
 		return std::sqrt(t_vec(_mm_mul_ps(res, res)).sum());
 	}
-	inline t_scalar magnitude4d() { return std::sqrt(dot(*this)); }
+	inline t_scalar magnitude4d() const { return std::sqrt(dot(*this)); }
 	inline t_vec normalize() { return _mm_div_ps(data_v, t_vec(magnitude())); }
 	inline t_vec normalize4d() {
 		return _mm_div_ps(data_v, t_vec(magnitude4d()));
+	}
+	inline t_scalar angle(const t_vec &v) {
+		return std::acos(dot(v) / (magnitude() * v.magnitude()));
 	}
 };
 
@@ -1207,12 +1216,16 @@ struct alignas(16) vec<double, 2, true> {
 	}
 
 	inline t_scalar sum() { return data[0] + data[1]; }
-	inline t_scalar dot(const t_vec &v) {
+	inline t_scalar dot(const t_vec &v) const {
 		const __m128d v0 = _mm_mul_pd(data_v, v.data_v);
 		return t_vec(v0).sum();
 	}
-	inline t_scalar magnitude() { return std::sqrt(dot(*this)); }
+	inline t_scalar magnitude() const { return std::sqrt(dot(*this)); }
 	inline t_vec normalize() { return _mm_div_pd(data_v, t_vec(magnitude())); }
+
+	inline t_scalar angle(const t_vec &v) {
+		return std::acos(dot(v) / (magnitude() * v.magnitude()));
+	}
 };
 
 template<>
@@ -1330,11 +1343,11 @@ struct alignas(32) vec<double, 4, true> {
 	}
 
 	inline t_scalar sum() { return data[0] + data[1] + data[2] + data[3]; }
-	inline t_scalar dot(const t_vec &v) {
+	inline t_scalar dot(const t_vec &v) const {
 		const __m256d v0 = _mm256_mul_pd(data_v, v.data_v);
 		return t_vec(v0).sum();
 	}
-	inline t_vec cross(const t_vec &v) {
+	inline t_vec cross(const t_vec &v) const {
 		const __m256d t1 = _mm256_permute4x64_pd(
 				data_v, MD_SHUFFLE(MD_S_Y, MD_S_Z, MD_S_X, MD_S_W));
 		const __m256d t2 = _mm256_permute4x64_pd(
@@ -1346,16 +1359,20 @@ struct alignas(32) vec<double, 4, true> {
 
 		return _mm256_sub_pd(_mm256_mul_pd(t1, t2), _mm256_mul_pd(t3, t4));
 	}
-	inline t_scalar magnitude() {
+	inline t_scalar magnitude() const {
 		__m256d res = {x(), y(), z(), 0.0};
 		return std::sqrt(t_vec(_mm256_mul_pd(res, res)).sum());
 	}
-	inline t_scalar magnitude4d() { return std::sqrt(dot(*this)); }
+	inline t_scalar magnitude4d() const { return std::sqrt(dot(*this)); }
 	inline t_vec normalize() {
 		return _mm256_div_pd(data_v, t_vec(magnitude()));
 	}
 	inline t_vec normalize4d() {
 		return _mm256_div_pd(data_v, t_vec(magnitude4d()));
+	}
+
+	inline t_scalar angle(const t_vec &v) {
+		return std::acos(dot(v) / (magnitude() * v.magnitude()));
 	}
 };
 

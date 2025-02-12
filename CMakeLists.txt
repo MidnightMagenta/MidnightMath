@@ -33,6 +33,7 @@ add_library("${ProjectName}" STATIC
         include/information.hpp
         include/vector.hpp
         include/constants.hpp
+        include/matrix.hpp
 )
 
 add_dependencies("${ProjectName}" q_start_clock)
@@ -43,6 +44,7 @@ add_executable(md-math-tests
     tests/sanity_test.cpp
     tests/vector_tests.cpp
     tests/simd_vector_tests.cpp
+    tests/matrix_tests.cpp
 )
 
 target_link_libraries(md-math-tests gtest_main ${ProjectName})
