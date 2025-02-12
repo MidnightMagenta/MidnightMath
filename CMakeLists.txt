@@ -36,6 +36,7 @@ add_library("${ProjectName}" STATIC
         include/matrix.hpp
         include/matrix_library.hpp
         include/units.hpp
+        include/support_functions.hpp
 
 	    include/md_math.hpp
 )

@@ -6,6 +6,7 @@
 #include "matrix_library.hpp"
 #include "constants.hpp"
 #include "units.hpp"
+#include "support_functions.hpp"
 
 namespace mdm = md_math;
 
