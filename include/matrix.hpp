@@ -57,7 +57,7 @@ NON_SIMD_MATRIX &GenericMatrixMultiply(const NON_SIMD_MATRIX &a,
 }
 
 NON_SIMD_MATRIX_TEMPLATE
-NON_SIMD_VECTOR generic_vector_multiply(const NON_SIMD_MATRIX &mat,
+NON_SIMD_VECTOR GenericVectorMultiply(const NON_SIMD_MATRIX &mat,
 										const NON_SIMD_VECTOR &v) {
 	NON_SIMD_VECTOR result = mat.columns[0] * v.data[0];
 	for (unsigned int i = 1; i < t_size; ++i) {
