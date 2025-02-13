@@ -4,7 +4,7 @@
 #include <intrin.h>
 
 namespace md_math::support {
-bool CheckSIMD_Support() {
+inline bool CheckSIMD_Support() {
 	int cpuInfo[4];
 	__cpuid(cpuInfo, 1);
 	if (!(cpuInfo[2] & (1 << 28))) { return false; }
