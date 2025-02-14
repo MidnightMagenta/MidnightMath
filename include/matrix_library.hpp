@@ -68,41 +68,39 @@ inline t_matrix ScaleMatrix(typename t_matrix::t_scalar x,
 }
 
 template<typename t_matrix>
-inline t_matrix OrthographicProjectionMatrix(typename t_matrix::t_scalar left,
-											 typename t_matrix::t_scalar right,
-											 typename t_matrix::t_scalar bottom,
-											 typename t_matrix::t_scalar top,
-											 typename t_matrix::t_scalar near,
-											 typename t_matrix::t_scalar far) {
+inline t_matrix OrthographicProjectionMatrix(
+		typename t_matrix::t_scalar m_left, typename t_matrix::t_scalar m_right,
+		typename t_matrix::t_scalar m_bottom, typename t_matrix::t_scalar m_top,
+		typename t_matrix::t_scalar m_near, typename t_matrix::t_scalar m_far) {
 	t_matrix result = result.SetIdentity();
-	result.columns[0].data[0] = 2 / (right - left);
-	result.columns[1].data[1] = 2 / (top - bottom);
-	result.columns[2].data[2] = -2 / (far - near);
-	result.columns[3] = t_matrix::t_vec({-((right + left) / (right - left)),
-										 -((top + bottom) / (top - bottom)),
-										 -((far + near) / (far - near)),
-										 t_matrix::t_scalar(1.0)});
+	result.columns[0].data[0] = 2 / (m_right - m_left);
+	result.columns[1].data[1] = 2 / (m_top - m_bottom);
+	result.columns[2].data[2] = -2 / (m_far - m_near);
+	result.columns[3] = t_matrix::t_vec(
+			{-((m_right + m_left) / (m_right - m_left)),
+			 -((m_top + m_bottom) / (m_top - m_bottom)),
+			 -((m_far + m_near) / (m_far - m_near)), t_matrix::t_scalar(1.0)});
 	return result;
 }
 
 template<typename t_matrix>
 inline t_matrix FrustrumProjectionMatrix(typename t_matrix::t_scalar fov,
 										 typename t_matrix::t_scalar aspect,
-										 typename t_matrix::t_scalar near,
-										 typename t_matrix::t_scalar far) {
+										 typename t_matrix::t_scalar m_near,
+										 typename t_matrix::t_scalar m_far) {
 	t_matrix result = result.SetIdentity();
 	result.columns[0] = t_matrix::t_vec(
-			{(2 * near) / (aspect * std::tan(fov / 2)), t_matrix::t_scalar(0),
+			{(2 * m_near) / (aspect * std::tan(fov / 2)), t_matrix::t_scalar(0),
 			 t_matrix::t_scalar(0), t_matrix::t_scalar(0)});
 	result.columns[1] = t_matrix::t_vec(
-			{t_matrix::t_scalar(0), (2 * near) / std::tan(fov / 2),
+			{t_matrix::t_scalar(0), (2 * m_near) / std::tan(fov / 2),
 			 t_matrix::t_scalar(0), t_matrix::t_scalar(0)});
 	result.columns[2] = t_matrix::t_vec(
 			{t_matrix::t_scalar(0), t_matrix::t_scalar(0),
-			 -(far + near) / (far - near), t_matrix::t_scalar(-1)});
+			 -(m_far + m_near) / (m_far - m_near), t_matrix::t_scalar(-1)});
 	result.columns[3] = t_matrix::t_vec(
 			{t_matrix::t_scalar(0), t_matrix::t_scalar(0),
-			 -(2 * far * near) / (far - near), t_matrix::t_scalar(0)});
+			 -(2 * m_far * m_near) / (m_far - m_near), t_matrix::t_scalar(0)});
 	return result;
 }
 }// namespace md_math
