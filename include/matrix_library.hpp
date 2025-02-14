@@ -69,38 +69,38 @@ inline t_matrix ScaleMatrix(typename t_matrix::t_scalar x,
 
 template<typename t_matrix>
 inline t_matrix OrthographicProjectionMatrix(
-		typename t_matrix::t_scalar m_left, typename t_matrix::t_scalar m_right,
-		typename t_matrix::t_scalar m_bottom, typename t_matrix::t_scalar m_top,
-		typename t_matrix::t_scalar m_near, typename t_matrix::t_scalar m_far) {
+		typename t_matrix::t_scalar l, typename t_matrix::t_scalar r,
+		typename t_matrix::t_scalar b, typename t_matrix::t_scalar t,
+		typename t_matrix::t_scalar n, typename t_matrix::t_scalar f) {
 	t_matrix result = result.SetIdentity();
-	result.columns[0].data[0] = 2 / (m_right - m_left);
-	result.columns[1].data[1] = 2 / (m_top - m_bottom);
-	result.columns[2].data[2] = -2 / (m_far - m_near);
+	result.columns[0].data[0] = 2 / (r - l);
+	result.columns[1].data[1] = 2 / (t - b);
+	result.columns[2].data[2] = -2 / (f - n);
 	result.columns[3] = t_matrix::t_vec(
-			{-((m_right + m_left) / (m_right - m_left)),
-			 -((m_top + m_bottom) / (m_top - m_bottom)),
-			 -((m_far + m_near) / (m_far - m_near)), t_matrix::t_scalar(1.0)});
+			{-((r + l) / (r - l)),
+			 -((t + b) / (t - b)),
+			 -((f + n) / (f - n)), t_matrix::t_scalar(1.0)});
 	return result;
 }
 
 template<typename t_matrix>
 inline t_matrix FrustrumProjectionMatrix(typename t_matrix::t_scalar fov,
 										 typename t_matrix::t_scalar aspect,
-										 typename t_matrix::t_scalar m_near,
-										 typename t_matrix::t_scalar m_far) {
+										 typename t_matrix::t_scalar n,
+										 typename t_matrix::t_scalar f) {
 	t_matrix result = result.SetIdentity();
 	result.columns[0] = t_matrix::t_vec(
-			{(2 * m_near) / (aspect * std::tan(fov / 2)), t_matrix::t_scalar(0),
+			{(2 * n) / (aspect * std::tan(fov / 2)), t_matrix::t_scalar(0),
 			 t_matrix::t_scalar(0), t_matrix::t_scalar(0)});
 	result.columns[1] = t_matrix::t_vec(
-			{t_matrix::t_scalar(0), (2 * m_near) / std::tan(fov / 2),
+			{t_matrix::t_scalar(0), (2 * n) / std::tan(fov / 2),
 			 t_matrix::t_scalar(0), t_matrix::t_scalar(0)});
 	result.columns[2] = t_matrix::t_vec(
 			{t_matrix::t_scalar(0), t_matrix::t_scalar(0),
-			 -(m_far + m_near) / (m_far - m_near), t_matrix::t_scalar(-1)});
+			 -(f + n) / (f - n), t_matrix::t_scalar(-1)});
 	result.columns[3] = t_matrix::t_vec(
 			{t_matrix::t_scalar(0), t_matrix::t_scalar(0),
-			 -(2 * m_far * m_near) / (m_far - m_near), t_matrix::t_scalar(0)});
+			 -(2 * f * n) / (f - n), t_matrix::t_scalar(0)});
 	return result;
 }
 }// namespace md_math
