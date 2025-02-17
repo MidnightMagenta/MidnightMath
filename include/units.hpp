@@ -45,18 +45,22 @@ MD_MATH_DEFINE_UNIT(kA, 1e-3)
 MD_MATH_DEFINE_UNIT(MA, 1e-6)
 MD_MATH_DEFINE_UNIT(GA, 1e-9)
 
+//angle
+MD_MATH_DEFINE_UNIT(rad, 1)
+MD_MATH_DEFINE_UNIT(deg, 57.295779513)
+
 //temperature
 inline float CelciusToFarenheit(float celcius) {
-	return (celcius * (9 / 5)) + 32;
+	return float((celcius * (9.f / 5.f)) + 32.f);
 }
 inline double CelciusToFarenheit(double celcius) {
-	return (celcius * (9 / 5)) + 32;
+	return double((celcius * (9.0 / 5.0)) + 32.0);
 }
 inline float FarenheitToCelcius(float farenheit) {
-	return (farenheit - 32) * (5 / 9);
+	return float((farenheit - 32.f) * (5.f / 9.f));
 }
 inline double FarenheitToCelcius(double farenheit) {
-	return (farenheit - 32) * (5 / 9);
+	return double((farenheit - 32.0) * (5.0 / 9.0));
 }
 inline float CelciusToKelvin(float celcius) { return celcius + 273.15; }
 inline double CelciusToKelvin(double celcius) { return celcius + 273.15; }
