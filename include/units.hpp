@@ -2,8 +2,8 @@
 #define UNITS_H
 
 #define MD_MATH_DEFINE_UNIT(name, value)                                       \
-	constexpr float name##_f = value;                                          \
-	constexpr double name##_d = value;
+	constexpr float name##_f = float(value);                                          \
+	constexpr double name##_d = double(value);
 
 namespace md_math::units {
 //distance
