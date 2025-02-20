@@ -19,12 +19,6 @@ FetchContent_MakeAvailable(googletest)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_custom_target(q_start_clock ALL
-    COMMENT "Starting console clock"
-    COMMAND "${PROJECT_SOURCE_DIR}/console_clock/bin/run.bat"
-    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/console_clock/bin"
-)
-
 #app executable
 add_library("${ProjectName}" STATIC
         #src files
