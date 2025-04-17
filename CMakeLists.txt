@@ -35,8 +35,6 @@ add_library("${ProjectName}" STATIC
 	    include/md_math.hpp
 )
 
-add_dependencies("${ProjectName}" q_start_clock)
-
 enable_testing()
 
 add_executable(md-math-tests 
