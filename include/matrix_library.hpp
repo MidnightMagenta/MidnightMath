@@ -103,6 +103,37 @@ inline t_matrix FrustrumProjectionMatrix(typename t_matrix::t_scalar fov,
 			 -(2 * f * n) / (f - n), t_matrix::t_scalar(0)});
 	return result;
 }
+
+template<typename t_matrix>
+inline t_matrix LookAtMatrix(const typename t_matrix::t_vec &eye,
+							 const typename t_matrix::t_vec &target,
+							 const typename t_matrix::t_vec &up) {
+	using t_vec = typename t_matrix::t_vec;
+	using t_scalar = typename t_matrix::t_scalar;
+
+	const t_vec c2 = (target - eye).normalize();
+	const t_vec c0 = c2.cross(up).normalize();
+	const t_vec c1 = c2.cross(c0);
+	const t_vec neg_eye = -eye;
+
+	const t_scalar d0 = t_scalar(c0.dot(neg_eye));
+	const t_scalar d1 = t_scalar(c1.dot(neg_eye));
+	const t_scalar d2 = t_scalar(c2.dot(neg_eye));
+
+	t_matrix result{};
+	result.SetIdentity();
+	result.columns[0] = c0;
+	result.columns[1] = c1;
+	result.columns[2] = c2;
+
+	result.columns[0].w() = d0;
+	result.columns[1].w() = d1;
+	result.columns[2].w() = d2;
+	result.SetTranspose();
+
+	return result;
+}
+
 }// namespace md_math
 
 #endif// !MATRIX_LIBRARY_H

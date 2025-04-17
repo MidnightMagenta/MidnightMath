@@ -240,18 +240,18 @@ struct vec<t_scalar_, 2, false> {
 		for (size_t i = 0; i < t_size; i++) { sum += data[i] * data[i]; }
 		return std::sqrt(sum);
 	}
-	inline t_vec normalize() {
+	inline t_vec normalize() const {
 		t_vec res = *this;
 		t_scalar _length = magnitude();
 		for (size_t i = 0; i < t_size; i++) { res.data[i] /= _length; }
 		return res;
 	}
-	inline t_scalar dot(const t_vec &b) {
+	inline t_scalar dot(const t_vec &b) const {
 		t_scalar result = 0;
 		for (size_t i = 0; i < t_size; i++) { result += data[i] * b.data[i]; }
 		return result;
 	}
-	inline t_scalar angle(const t_vec &b) {
+	inline t_scalar angle(const t_vec &b) const {
 		return std::acos(dot(b) / (magnitude() * b.magnitude()));
 	}
 };
@@ -457,18 +457,18 @@ struct vec<t_scalar_, 3, false> {
 		for (size_t i = 0; i < t_size; i++) { sum += data[i] * data[i]; }
 		return std::sqrt(sum);
 	}
-	inline t_vec normalize() {
+	inline t_vec normalize() const {
 		t_vec res = *this;
 		t_scalar _length = magnitude();
 		for (size_t i = 0; i < t_size; i++) { res.data[i] /= _length; }
 		return res;
 	}
-	inline t_scalar dot(const t_vec &b) {
+	inline t_scalar dot(const t_vec &b) const {
 		t_scalar result = 0;
 		for (size_t i = 0; i < t_size; i++) { result += data[i] * b.data[i]; }
 		return result;
 	}
-	inline t_scalar angle(const t_vec &b) {
+	inline t_scalar angle(const t_vec &b) const {
 		return std::acos(dot(b) / (magnitude() * b.magnitude()));
 	}
 
@@ -691,20 +691,20 @@ struct vec<t_scalar_, 4, false> {
 		return std::sqrt(sum);
 	}
 
-	inline t_vec normalize() {
+	inline t_vec normalize() const {
 		t_vec res = *this;
 		t_scalar _length = magnitude();
 		for (size_t i = 0; i < t_size; i++) { res.data[i] /= _length; }
 		return res;
 	}
 
-	inline t_scalar dot(const t_vec &b) {
+	inline t_scalar dot(const t_vec &b) const {
 		t_scalar result = 0;
 		for (size_t i = 0; i < t_size; i++) { result += data[i] * b.data[i]; }
 		return result;
 	}
 
-	inline t_scalar angle(const t_vec &b) {
+	inline t_scalar angle(const t_vec &b) const {
 		return std::acos(dot(b) / (magnitude() * b.magnitude()));
 	}
 
@@ -937,20 +937,20 @@ struct vec<t_scalar_, t_size_, false> {
 		return std::sqrt(sum);
 	}
 
-	inline t_vec normalize() {
+	inline t_vec normalize() const {
 		t_vec res = *this;
 		t_scalar _length = magnitude();
 		for (size_t i = 0; i < t_size; i++) { res.data[i] /= _length; }
 		return res;
 	}
 
-	inline t_scalar dot(const t_vec &b) {
+	inline t_scalar dot(const t_vec &b) const {
 		t_scalar result = 0;
 		for (size_t i = 0; i < t_size; i++) { result += data[i] * b.data[i]; }
 		return result;
 	}
 
-	inline t_scalar angle(const t_vec &b) {
+	inline t_scalar angle(const t_vec &b) const {
 		return std::acos(dot(b) / (magnitude() * b.magnitude()));
 	}
 };
@@ -1097,7 +1097,7 @@ struct alignas(16) vec<float, 4, true> {
 		return std::sqrt(t_vec(_mm_mul_ps(res, res)).sum());
 	}
 	inline t_scalar magnitude4d() const { return std::sqrt(dot(*this)); }
-	inline t_vec normalize() { return _mm_div_ps(data_v, t_vec(magnitude())); }
+	inline t_vec normalize() const { return _mm_div_ps(data_v, t_vec(magnitude())); }
 	inline t_vec normalize4d() {
 		return _mm_div_ps(data_v, t_vec(magnitude4d()));
 	}
@@ -1221,7 +1221,7 @@ struct alignas(16) vec<double, 2, true> {
 		return t_vec(v0).sum();
 	}
 	inline t_scalar magnitude() const { return std::sqrt(dot(*this)); }
-	inline t_vec normalize() { return _mm_div_pd(data_v, t_vec(magnitude())); }
+	inline t_vec normalize() const { return _mm_div_pd(data_v, t_vec(magnitude())); }
 
 	inline t_scalar angle(const t_vec &v) {
 		return std::acos(dot(v) / (magnitude() * v.magnitude()));
@@ -1364,7 +1364,7 @@ struct alignas(32) vec<double, 4, true> {
 		return std::sqrt(t_vec(_mm256_mul_pd(res, res)).sum());
 	}
 	inline t_scalar magnitude4d() const { return std::sqrt(dot(*this)); }
-	inline t_vec normalize() {
+	inline t_vec normalize() const {
 		return _mm256_div_pd(data_v, t_vec(magnitude()));
 	}
 	inline t_vec normalize4d() {
