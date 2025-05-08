@@ -47,7 +47,7 @@ MD_MATH_DEFINE_UNIT(GA, 1e-9)
 
 //angle
 MD_MATH_DEFINE_UNIT(rad, 1)
-MD_MATH_DEFINE_UNIT(deg, 57.295779513)
+MD_MATH_DEFINE_UNIT(deg, 0.0174533)
 
 //temperature
 inline float CelciusToFarenheit(float celcius) {
