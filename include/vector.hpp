@@ -120,9 +120,21 @@ struct vec<t_scalar_, 2, false> {
 	template<typename t_b_type>
 	inline t_vec operator=(const t_b_type &b) {
 		size_t l = (t_size < t_b_type::t_size) ? t_size : t_b_type::t_size;
-		for (size_t i = 0; i < t_size; i++) { data[i] = t_scalar(b.data[i]); }
+		for (size_t i = 0; i < l; i++) { data[i] = t_scalar(b.data[i]); }
 		for (size_t i = l; i < t_size; i++) { data[i] = t_scalar(0); }
 		return *this;
+	}
+	template<typename t_b_type>
+	inline operator t_b_type() const {
+		t_b_type result;
+		size_t l = (t_size < t_b_type::t_size) ? t_size : t_b_type::t_size;
+		for (size_t i = 0; i < l; i++) {
+			result.data[i] = t_b_type::t_scalar(data[i]);
+		}
+		for (size_t i = l; i < t_b_type::t_size; i++) {
+			result.data[i] = t_b_type::t_scalar(0.f);
+		}
+		return result;
 	}
 
 	inline t_vec operator+(const t_vec &b) const {
@@ -338,9 +350,21 @@ struct vec<t_scalar_, 3, false> {
 	template<typename t_b_type>
 	inline t_vec operator=(const t_b_type &b) {
 		size_t l = (t_size < t_b_type::t_size) ? t_size : t_b_type::t_size;
-		for (size_t i = 0; i < t_size; i++) { data[i] = t_scalar(b.data[i]); }
+		for (size_t i = 0; i < l; i++) { data[i] = t_scalar(b.data[i]); }
 		for (size_t i = l; i < t_size; i++) { data[i] = t_scalar(0); }
 		return *this;
+	}
+	template<typename t_b_type>
+	inline operator t_b_type() const {
+		t_b_type result;
+		size_t l = (t_size < t_b_type::t_size) ? t_size : t_b_type::t_size;
+		for (size_t i = 0; i < l; i++) {
+			result.data[i] = t_b_type::t_scalar(data[i]);
+		}
+		for (size_t i = l; i < t_b_type::t_size; i++) {
+			result.data[i] = t_b_type::t_scalar(0.f);
+		}
+		return result;
 	}
 
 	inline t_vec operator+(const t_vec &b) const {
@@ -563,9 +587,21 @@ struct vec<t_scalar_, 4, false> {
 	template<typename t_b_type>
 	inline t_vec operator=(const t_b_type &b) {
 		size_t l = (t_size < t_b_type::t_size) ? t_size : t_b_type::t_size;
-		for (size_t i = 0; i < t_size; i++) { data[i] = t_scalar(b.data[i]); }
+		for (size_t i = 0; i < l; i++) { data[i] = t_scalar(b.data[i]); }
 		for (size_t i = l; i < t_size; i++) { data[i] = t_scalar(0); }
 		return *this;
+	}
+	template<typename t_b_type>
+	inline operator t_b_type() const {
+		t_b_type result;
+		size_t l = (t_size < t_b_type::t_size) ? t_size : t_b_type::t_size;
+		for (size_t i = 0; i < l; i++) {
+			result.data[i] = t_b_type::t_scalar(data[i]);
+		}
+		for (size_t i = l; i < t_b_type::t_size; i++) {
+			result.data[i] = t_b_type::t_scalar(0.f);
+		}
+		return result;
 	}
 
 	inline t_vec operator+(const t_vec &b) const {
@@ -800,9 +836,21 @@ struct vec<t_scalar_, t_size_, false> {
 	template<typename t_b_type>
 	inline t_vec operator=(const t_b_type &b) {
 		size_t l = (t_size < t_b_type::t_size) ? t_size : t_b_type::t_size;
-		for (size_t i = 0; i < t_size; i++) { data[i] = t_scalar(b.data[i]); }
+		for (size_t i = 0; i < l; i++) { data[i] = t_scalar(b.data[i]); }
 		for (size_t i = l; i < t_size; i++) { data[i] = t_scalar(0); }
 		return *this;
+	}
+	template<typename t_b_type>
+	inline operator t_b_type() const {
+		t_b_type result;
+		size_t l = (t_size < t_b_type::t_size) ? t_size : t_b_type::t_size;
+		for (size_t i = 0; i < l; i++) {
+			result.data[i] = t_b_type::t_scalar(data[i]);
+		}
+		for (size_t i = l; i < t_b_type::t_size; i++) {
+			result.data[i] = t_b_type::t_scalar(0.f);
+		}
+		return result;
 	}
 
 	inline t_vec operator+(const t_vec &b) const {
@@ -1097,7 +1145,9 @@ struct alignas(16) vec<float, 4, true> {
 		return std::sqrt(t_vec(_mm_mul_ps(res, res)).sum());
 	}
 	inline t_scalar magnitude4d() const { return std::sqrt(dot(*this)); }
-	inline t_vec normalize() const { return _mm_div_ps(data_v, t_vec(magnitude())); }
+	inline t_vec normalize() const {
+		return _mm_div_ps(data_v, t_vec(magnitude()));
+	}
 	inline t_vec normalize4d() {
 		return _mm_div_ps(data_v, t_vec(magnitude4d()));
 	}
@@ -1221,7 +1271,9 @@ struct alignas(16) vec<double, 2, true> {
 		return t_vec(v0).sum();
 	}
 	inline t_scalar magnitude() const { return std::sqrt(dot(*this)); }
-	inline t_vec normalize() const { return _mm_div_pd(data_v, t_vec(magnitude())); }
+	inline t_vec normalize() const {
+		return _mm_div_pd(data_v, t_vec(magnitude()));
+	}
 
 	inline t_scalar angle(const t_vec &v) {
 		return std::acos(dot(v) / (magnitude() * v.magnitude()));
