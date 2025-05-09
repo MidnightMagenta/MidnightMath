@@ -111,8 +111,8 @@ inline t_matrix LookAtMatrix(const typename t_matrix::t_vec &eye,
 	using t_vec = typename t_matrix::t_vec;
 	using t_scalar = typename t_matrix::t_scalar;
 
-	const t_vec c2 = (target - eye).normalize();
-	const t_vec c0 = c2.cross(up).normalize();
+	const t_vec c2 = (eye - target).normalize();
+	const t_vec c0 = c2.cross(-up).normalize();
 	const t_vec c1 = c2.cross(c0);
 	const t_vec neg_eye = -eye;
 

@@ -727,10 +727,24 @@ struct vec<t_scalar_, 4, false> {
 		return std::sqrt(sum);
 	}
 
+	inline t_scalar magnitude3D() const {
+		return std::sqrt(data[0] * data[0] + data[1] * data[1] + data[2] +
+						 data[2]);
+	}
+
 	inline t_vec normalize() const {
 		t_vec res = *this;
 		t_scalar _length = magnitude();
 		for (size_t i = 0; i < t_size; i++) { res.data[i] /= _length; }
+		return res;
+	}
+
+	inline t_vec normalize3D() const {
+		t_vec res = *this;
+		t_scalar _length = magnitude3D();
+		res.data[0] /= _length;
+		res.data[1] /= _length;
+		res.data[2] /= _length;
 		return res;
 	}
 
@@ -746,7 +760,7 @@ struct vec<t_scalar_, 4, false> {
 
 	inline t_vec cross(const t_vec &b) const {
 		return {y() * b.z() - z() * b.y(), z() * b.x() - x() * b.z(),
-				x() * b.y() - y() * b.x(), 1.f};
+				x() * b.y() - y() * b.x(), 0.f};
 	}
 };
 
