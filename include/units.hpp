@@ -62,9 +62,9 @@ inline float FarenheitToCelcius(float farenheit) {
 inline double FarenheitToCelcius(double farenheit) {
 	return double((farenheit - 32.0) * (5.0 / 9.0));
 }
-inline float CelciusToKelvin(float celcius) { return celcius + 273.15; }
+inline float CelciusToKelvin(float celcius) { return celcius + 273.15f; }
 inline double CelciusToKelvin(double celcius) { return celcius + 273.15; }
-inline float KelvinToCelcius(float kelvin) { return kelvin - 273.15; }
+inline float KelvinToCelcius(float kelvin) { return kelvin - 273.15f; }
 inline double KelvinToCelcius(double kelvin) { return kelvin - 273.15; }
 
 //ammount of substance
