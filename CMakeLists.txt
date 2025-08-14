@@ -46,4 +46,12 @@ add_executable(md-math-tests
 
 target_link_libraries(md-math-tests gtest_main ${ProjectName})
 
+set_target_properties("${ProjectName}" md-math-tests PROPERTIES 
+    FOLDER "MidnightMath"
+)
+
+set_target_properties(gmock gtest gmock_main gtest_main PROPERTIES 
+    FOLDER "gtest"
+)
+
 include(googletest)
